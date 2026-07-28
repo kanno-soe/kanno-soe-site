@@ -17,7 +17,7 @@ particular, questions answerable from general knowledge are NO — including
 general Buddhism, general Zen, general philosophy, general Lean/programming
 questions not about this repo, and anything else (news, advice, math, taxes,
 chit-chat). "Did the Buddha teach the Four Noble Truths" is NO. "How does the
-paper's WaaMismatchGrade relate to the four truths" is YES.
+paper's resonance relate to kanno doko" is YES.
 
 Respond with exactly YES or NO. Nothing else.`;
 
