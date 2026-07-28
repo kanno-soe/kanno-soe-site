@@ -72,7 +72,7 @@ function setConfigText() {
   const selfServeUrl = state.config.selfServeUrl || "/";
   els.selfServeConsentLink.href = selfServeUrl;
   els.selfServeBannerLink.href = selfServeUrl;
-  els.commitText.textContent = `Grounded in WeldAndArrow @ ${state.config.commit || "dev"}`;
+  els.commitText.textContent = `Grounded in kanno-soe @ ${state.config.commit || "dev"}`;
 }
 
 function showConfigWarning(message) {
@@ -289,7 +289,7 @@ function renderHistory() {
   if (state.history.length === 0) {
     const empty = document.createElement("div");
     empty.className = "empty-state";
-    empty.textContent = "Ask about the Weld and Arrow theory, paper, or Lean repository.";
+    empty.textContent = "Ask about Kannō-Sōe Mutual Dependence (KSMD), its paper, or its Lean repository.";
     els.messages.append(empty);
     return;
   }
@@ -299,7 +299,7 @@ function renderHistory() {
     node.className = `message ${message.role}`;
     const label = document.createElement("div");
     label.className = "message-label";
-    label.textContent = message.role === "user" ? "You" : "Weld and Arrow";
+    label.textContent = message.role === "user" ? "You" : "KSMD";
     const body = document.createElement("div");
     body.className = "message-body";
     body.textContent = message.content || " ";
@@ -314,7 +314,7 @@ function renderNotice(text) {
   node.className = "message assistant notice";
   const label = document.createElement("div");
   label.className = "message-label";
-  label.textContent = "Weld and Arrow";
+  label.textContent = "KSMD";
   const body = document.createElement("div");
   body.className = "message-body";
   body.textContent = text;
@@ -328,7 +328,7 @@ function renderLimitNotice(reset, artifactUrl, selfServeUrl) {
   node.className = "message assistant notice";
   const label = document.createElement("div");
   label.className = "message-label";
-  label.textContent = "Weld and Arrow";
+  label.textContent = "KSMD";
   const body = document.createElement("div");
   body.className = "message-body";
   body.append("The spend limit resets at ", reset, ". Meanwhile, use the public artifact on your own Claude account: ");

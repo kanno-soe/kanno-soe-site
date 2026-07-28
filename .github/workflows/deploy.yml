@@ -39,7 +39,7 @@ jobs:
             cat pricing.log
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Checkout WeldAndArrow source
+      - name: Checkout kanno-soe source
         uses: actions/checkout@v4
         with:
           repository: ${{ github.repository_owner }}/kanno-soe
@@ -54,7 +54,7 @@ jobs:
           SOURCE_SHA="$(git -C source rev-parse HEAD)"
           echo "SOURCE_SHA=$SOURCE_SHA" >> "$GITHUB_ENV"
           {
-            echo "### WeldAndArrow context"
+            echo "### kanno-soe context"
             grep -E "SOURCE_COMMIT=|CONTEXT_APPROX_TOKENS=|CONTEXT_SNAPSHOT=|CONTEXT_SNAPSHOT_BYTES=|EXPOSITION_HTML=" context.log
           } >> "$GITHUB_STEP_SUMMARY"
 

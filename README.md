@@ -1,6 +1,6 @@
-# Weld and Arrow Site
+# Kannō-Sōe Mutual Dependence (KSMD) Site
 
-Cloudflare Worker + static self-serve UI for a repository-grounded WeldAndArrow guide.
+Cloudflare Worker + static self-serve UI for a repository-grounded kanno-soe guide.
 
 The hosted chat code is still present, but disabled by default because the full
 repository context is currently too expensive to serve interactively. The home
@@ -28,7 +28,7 @@ so they can use their own Claude account instead.
    - `SOURCE_READ_TOKEN`
 
 The deploy workflow fetches the current Claude pricing table, checks out the
-`WeldAndArrow` source repository, reads its committed Exposition Markdown,
+`kanno-soe` source repository, reads its committed Exposition Markdown,
 builds `src/context.generated.ts`, writes
 the public frozen context bundles, typechecks, and deploys with the source
 commit hash injected as `COMMIT_HASH`. Until `CLOUDFLARE_API_TOKEN` is
@@ -153,6 +153,6 @@ approximate time window.
 
 When `CHAT_ENABLED=true`, the older hosted-chat checks apply: general Buddhism
 must return literal `Mu` after the Haiku gate; mixed prompts must answer only the
-WeldAndArrow part; a tiny `LIMIT_HOUR_USD` should make `/api/chat` return `429`;
+kanno-soe part; a tiny `LIMIT_HOUR_USD` should make `/api/chat` return `429`;
 two close Fable calls should show cache read tokens on the second call; and fresh
 `lastActivity` should allow the warm cron to run.

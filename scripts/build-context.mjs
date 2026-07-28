@@ -146,7 +146,7 @@ function compareExpositionFiles(a, b) {
 }
 
 function isExcludedCodePath(rel) {
-  return rel.startsWith("WeldAndArrow/Exposition/");
+  return rel.startsWith("KannoSoe/Exposition/");
 }
 
 function codeDirectoryRank(rel) {
@@ -163,7 +163,7 @@ function compareCodeFiles(a, b) {
 }
 
 function collectCodeFiles(source) {
-  const root = path.join(source, "WeldAndArrow");
+  const root = path.join(source, "KannoSoe");
   if (!existsSync(root) || !statSync(root).isDirectory()) return [];
 
   const files = [];
@@ -235,7 +235,7 @@ function allSnapshotSelections() {
 function snapshotHeader({ commit, builtAt, repoUrl, files, selectedIds }) {
   const selectedLabels = SNAPSHOT_MODULES.filter(({ id }) => selectedIds.includes(id)).map(({ label }) => label);
   return [
-    "Weld and Arrow context snapshot",
+    "Kannō-Sōe Mutual Dependence (KSMD) context snapshot",
     `Source commit: ${commit}`,
     `Built at: ${builtAt}`,
     `Frozen snapshot of ${repoUrl}.`,
@@ -590,7 +590,7 @@ const relativeSnapshot = path.relative(path.dirname(scriptPath), snapshotPath).r
 const relativeExposition = path.relative(path.dirname(scriptPath), expositionPath).replaceAll(path.sep, "/");
 const relativeExpositionHtml = path.relative(path.dirname(scriptPath), expositionHtmlPath).replaceAll(path.sep, "/");
 const relativeManifest = path.relative(path.dirname(scriptPath), manifestPath).replaceAll(path.sep, "/");
-console.log(`WeldAndArrow context written to ${relativeOut}`);
+console.log(`kanno-soe context written to ${relativeOut}`);
 console.log(`SOURCE_COMMIT=${commit}`);
 console.log(`CONTEXT_APPROX_TOKENS=${approxTokens}`);
 console.log(`CONTEXT_SNAPSHOT=${relativeSnapshot}`);

@@ -2,8 +2,8 @@ import { CONTEXT, SOURCE_COMMIT } from "./context.generated";
 import type { Env } from "./types";
 
 export const GATE_SYSTEM_PROMPT = `You are a strict topic gate for a website about one specific work: the
-"WeldAndArrow" repository — a Lean 4 formalization and its accompanying paper
-("Weld and Arrow"), which give a formal treatment of karma, agency, welds,
+"kanno-soe" repository — a Lean 4 formalization and its accompanying paper
+("Kannō-Sōe Mutual Dependence (KSMD)"), which give a formal treatment of karma, agency, mutual dependence,
 the arrow/inga, the three-row grid, the separate/fuse rule, the fox koan
 (Hyakujō), and related apparatus, with modules like Signature, Consequences,
 Doctrines, Identification, Meta.
@@ -29,7 +29,7 @@ export function sourceCommit(env: Pick<Env, "COMMIT_HASH">): string {
 }
 
 export function buildCachedSystemText(commit: string): string {
-  return `You are the resident guide for the WeldAndArrow repository (commit ${commit}),
+  return `You are the resident guide for the kanno-soe repository (commit ${commit}),
 reproduced in full below. Ground every answer in this material. You may use
 general knowledge freely in service of explaining the repository and its paper.
 
