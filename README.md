@@ -67,10 +67,10 @@ to call `repository_dispatch` on the site repository.
 
 ## Domains
 
-Serve the Worker at `weldandarrow.org`. In Cloudflare, add a redirect rule:
+Serve the Worker at `ksmd-theory.org`. In Cloudflare, add a redirect rule:
 
 ```text
-weldandarrow.net/* -> https://weldandarrow.org/$1
+ksmd-theory.net/* -> https://ksmd-theory.org/$1
 ```
 
 Use status code `301`.
