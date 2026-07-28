@@ -42,7 +42,7 @@ jobs:
       - name: Checkout WeldAndArrow source
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.repository_owner }}/weld-and-arrow
+          repository: ${{ github.repository_owner }}/kanno-soe
           token: ${{ secrets.SOURCE_READ_TOKEN || github.token }}
           ref: ${{ github.event.client_payload.sha || 'main' }}
           path: source
@@ -50,7 +50,7 @@ jobs:
       - name: Build frozen context
         run: |
           set -o pipefail
-          node scripts/build-context.mjs --source source --out src/context.generated.ts --repo-url "https://github.com/${{ github.repository_owner }}/weld-and-arrow" | tee context.log
+          node scripts/build-context.mjs --source source --out src/context.generated.ts --repo-url "https://github.com/${{ github.repository_owner }}/kanno-soe" | tee context.log
           SOURCE_SHA="$(git -C source rev-parse HEAD)"
           echo "SOURCE_SHA=$SOURCE_SHA" >> "$GITHUB_ENV"
           {

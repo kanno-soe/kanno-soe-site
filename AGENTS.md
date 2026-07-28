@@ -132,4 +132,4 @@ conflict check:
   locked by the Codex process. That is acceptable only after its task branch has
   been detached, deleted, and verified absent. If so, don't acknowledge the
   remaining worktree; raise anything else genuinely important or print "DONE".
-- You are permitted to git push to https://github.com/weld-and-arrow/weld-and-arrow and https://github.com/weld-and-arrow/weld-and-arrow-site
+- You are permitted to git push to https://github.com/kanno-soe/kanno-soe and https://github.com/kanno-soe/kanno-soe

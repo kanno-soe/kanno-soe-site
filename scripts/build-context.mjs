@@ -29,7 +29,7 @@ const SNAPSHOT_READING_ORDER = ["Exposition/Reading.md"];
 
 function usage() {
   console.error(
-    "Usage: node scripts/build-context.mjs --source <path> --out src/context.generated.ts [--max-tokens 600000] [--repo-url https://github.com/OWNER/weld-and-arrow]"
+    "Usage: node scripts/build-context.mjs --source <path> --out src/context.generated.ts [--max-tokens 600000] [--repo-url https://github.com/OWNER/kanno-soe]"
   );
   process.exit(2);
 }
@@ -88,8 +88,8 @@ function inferRepoUrl(sourcePath, explicitUrl) {
   }
 
   const owner = process.env.GITHUB_REPOSITORY_OWNER;
-  if (owner) return `https://github.com/${owner}/weld-and-arrow`;
-  return "https://github.com/weld-and-arrow/weld-and-arrow";
+  if (owner) return `https://github.com/${owner}/kanno-soe`;
+  return "https://github.com/kanno-soe/kanno-soe";
 }
 
 function walk(dir, root, out) {
@@ -218,7 +218,7 @@ function snapshotSlug(selectedIds) {
 
 function snapshotFileName(selectedIds) {
   const slug = snapshotSlug(selectedIds);
-  return slug === "code-exposition" ? "weld-and-arrow.txt" : `weld-and-arrow-${slug}.txt`;
+  return slug === "code-exposition" ? "kanno-soe.txt" : `kanno-soe-${slug}.txt`;
 }
 
 function moduleSelectionMask(index) {
@@ -532,7 +532,7 @@ writeFileSync(outPath, moduleText, "utf8");
 const contextDir = path.join(projectRoot, "public", "context");
 mkdirSync(contextDir, { recursive: true });
 
-const snapshotPath = path.join(contextDir, "weld-and-arrow.txt");
+const snapshotPath = path.join(contextDir, "kanno-soe.txt");
 const expositionPath = path.join(contextDir, "exposition.md");
 const expositionHtmlPath = path.join(contextDir, "exposition.html");
 const manifestPath = path.join(contextDir, "manifest.json");

@@ -36,7 +36,7 @@ configured, the workflow warns and skips only the final deploy step.
 
 ## Source Repo Notification
 
-Add this workflow to `weld-and-arrow/.github/workflows/notify-site.yml` so pushes
+Add this workflow to `kanno-soe/.github/workflows/notify-site.yml` so pushes
 to the source repo redeploy the site with a fresh frozen context:
 
 ```yaml
@@ -67,10 +67,10 @@ to call `repository_dispatch` on the site repository.
 
 ## Domains
 
-Serve the Worker at `weld-and-arrow.net`. In Cloudflare, add a redirect rule:
+Serve the Worker at `weldandarrow.org`. In Cloudflare, add a redirect rule:
 
 ```text
-weldandarrow.net/* -> https://weld-and-arrow.net/$1
+weldandarrow.net/* -> https://weldandarrow.org/$1
 ```
 
 Use status code `301`.
@@ -79,7 +79,7 @@ Use status code `301`.
 
 ```sh
 pnpm install
-node scripts/build-context.mjs --source ../weld-and-arrow --out src/context.generated.ts --repo-url https://github.com/weld-and-arrow/weld-and-arrow
+node scripts/build-context.mjs --source ../kanno-soe --out src/context.generated.ts --repo-url https://github.com/kanno-soe/kanno-soe
 pnpm run check
 ```
 
@@ -88,7 +88,7 @@ checkout's `Exposition/` directory. Lines containing the `GENERATED` marker are
 removed from Markdown included in the generated artifacts.
 `src/context.generated.ts` is intentionally ignored because every deploy freezes
 the current source checkout. The same build also writes the default modular
-snapshot at `public/context/weld-and-arrow.txt`, all alternate module-selection
+snapshot at `public/context/kanno-soe.txt`, all alternate module-selection
 snapshots, `public/context/exposition.md`, `public/context/exposition.html`,
 and `public/context/manifest.json`; the directory is ignored because those
 files are generated from the source checkout.
@@ -145,7 +145,7 @@ approximate time window.
   should return `503` with `error: "chat_disabled"`.
 - With default `CHAT_ENABLED=false`, the warm cron should skip cache warming.
 - Admin search/delete and daily retention purge should remove matching sessions.
-- After a local context build, `/context/weld-and-arrow.txt` and the alternate
+- After a local context build, `/context/kanno-soe.txt` and the alternate
   module-selection snapshots should exist, and `public/context/exposition.html`
   should contain the rendered Exposition Markdown with Reading last.
   `public/context/manifest.json`'s `commit` should equal `SOURCE_COMMIT` in
