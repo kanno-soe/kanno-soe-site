@@ -5,7 +5,7 @@ Cloudflare Worker + static self-serve UI for a repository-grounded kanno-soe gui
 The hosted chat code is still present, but disabled by default because the full
 repository context is currently too expensive to serve interactively. The home
 page points visitors to a frozen context snapshot or the public GitHub repository
-so they can use their own Claude account instead.
+so they can use their own AI tools instead.
 
 ## Setup
 
@@ -27,7 +27,7 @@ so they can use their own Claude account instead.
    - `CLOUDFLARE_API_TOKEN`
    - `SOURCE_READ_TOKEN`
 
-The deploy workflow fetches the current Claude pricing table, checks out the
+The deploy workflow fetches the current model pricing table, checks out the
 `kanno-soe` source repository, reads its committed Exposition Markdown,
 builds `src/context.generated.ts`, writes
 the public frozen context bundles, typechecks, and deploys with the source
@@ -88,25 +88,30 @@ checkout's `Exposition/` directory. Lines containing the `GENERATED` marker are
 removed from Markdown included in the generated artifacts.
 `src/context.generated.ts` is intentionally ignored because every deploy freezes
 the current source checkout. The same build also writes the default modular
-snapshot at `public/context/kanno-soe.txt`, all alternate module-selection
+snapshot at `public/context/kanno-soe.md`, all alternate module-selection
 snapshots, `public/context/exposition.md`, `public/context/exposition.html`,
 and `public/context/manifest.json`; the directory is ignored because those
 files are generated from the source checkout.
 
 ## Self-Serve Use
 
-`GET /` serves an unrecorded alternatives page. `GET /use-your-own` is kept as
-an alias for older links.
+`GET /` serves the unrecorded self-serve page.
 
-- Choose snapshot modules on the home page and download the matching text file.
+- Choose snapshot modules on the home page and download the matching Markdown
+  file.
   The default selection is Code plus Exposition; the page updates the byte count
   and token estimate for the current selection. This keeps answers pinned to the
   exact frozen commit used by the deployed site.
 - Read the rendered Exposition Markdown committed to the source repository on
   the home page.
-- Connect Claude's GitHub connector to the public source repository. This avoids
-  downloading a file, but Claude reads live `main`, so answers can drift from the
-  frozen site context.
+- Connect an AI assistant's GitHub connector to the public source repository.
+  This avoids downloading a file, but the connector reads live `main`, so its
+  answers can drift from the frozen site context.
+
+Requests to `/` that prefer `text/markdown` over `text/html` receive the raw
+Exposition Markdown. The response begins with the site's introductory context,
+source repository, frozen commit, and individual Code, Exposition, and Glossary
+download links.
 
 The page fetches `/context/manifest.json` for commit/date/size metadata and
 `/api/config` so the configured `ARTIFACT_URL` remains visible in the footer.
@@ -118,8 +123,8 @@ When `CHAT_ENABLED` is not set to literal `true`, `POST /api/session` and
 skips cache warming. The chat UI code in `public/app.js` and the Worker chat
 handlers are intentionally retained for a future re-enable.
 
-If the hosted chat is re-enabled, the Worker gates each user message with Claude
-Haiku 4.5, answers on-topic parts with Claude Fable 5, records consented
+If the hosted chat is re-enabled, the Worker gates each user message with
+Haiku 4.5, answers on-topic parts with Fable 5, records consented
 transcripts in EU-jurisdiction Durable Objects, and keeps the cached repository
 context warm while the site is active.
 
@@ -140,14 +145,15 @@ approximate time window.
   loading Turnstile or `public/app.js`.
 - `/` should render every Markdown file under the source repository's
   `Exposition/` directory beneath the self-serve choices.
-- `/use-your-own` should serve the same home page.
+- Requests to `/` that prefer `text/markdown` should receive the raw Exposition
+  Markdown with source and per-module `.md` download links first.
 - With default `CHAT_ENABLED=false`, `POST /api/session` and `POST /api/chat`
   should return `503` with `error: "chat_disabled"`.
 - With default `CHAT_ENABLED=false`, the warm cron should skip cache warming.
 - Admin search/delete and daily retention purge should remove matching sessions.
-- After a local context build, `/context/kanno-soe.txt` and the alternate
+- After a local context build, `/context/kanno-soe.md` and the alternate
   module-selection snapshots should exist, and `public/context/exposition.html`
-  should contain the rendered Exposition Markdown with Reading last.
+  should contain the rendered Exposition Markdown.
   `public/context/manifest.json`'s `commit` should equal `SOURCE_COMMIT` in
   `src/context.generated.ts`.
 

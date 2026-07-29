@@ -49,13 +49,7 @@ async function loadManifest() {
 
 function wireSnapshotPicker() {
   for (const input of snapshotModuleInputs) {
-    input.addEventListener("change", (event) => {
-      const target = event.currentTarget;
-      if (target instanceof HTMLInputElement && target.value === "code" && target.checked) {
-        setSnapshotModuleChecked("reading", false);
-      }
-      updateSnapshotSelection();
-    });
+    input.addEventListener("change", updateSnapshotSelection);
   }
 }
 
@@ -103,11 +97,6 @@ function applyDefaultSnapshotSelection(manifest) {
 
   const defaults = new Set(manifest.defaultSnapshotModules);
   for (const input of snapshotModuleInputs) input.checked = defaults.has(input.value);
-}
-
-function setSnapshotModuleChecked(value, checked) {
-  const input = snapshotModuleInputs.find((candidate) => candidate.value === value);
-  if (input) input.checked = checked;
 }
 
 function selectedSnapshotModules() {
@@ -161,7 +150,6 @@ function updateSnapshotPromptHint(modules) {
       if (module === "exposition") return "theory";
       if (module === "code") return "code";
       if (module === "glossary") return "glossary";
-      if (module === "reading") return "reading";
       return "";
     })
     .filter(Boolean);

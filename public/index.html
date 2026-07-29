@@ -14,7 +14,7 @@
     >
     <title>Kannō-Sōe Mutual Dependence (KSMD)</title>
     <link rel="stylesheet" href="/style.css">
-    <script src="/use-your-own.js" type="module"></script>
+    <script src="/home.js" type="module"></script>
   </head>
   <body>
     <div class="page-shell">
@@ -36,17 +36,17 @@
               formalization with an accompanying Exposition.
             </p>
             <p>
-              The site is frozen to a source commit, so the snapshot below gives Claude the same repository context
+              The site is frozen to a source commit, so the snapshot below gives an AI the same repository context
               used for this build.
             </p>
             <p class="status-copy">
               The hosted chat is offline while the full repository context is too expensive to serve. Both options
-              below run against your own Claude account.
+              below let you use your own AI tools.
             </p>
           </div>
         </section>
 
-        <div class="option-grid" aria-label="Use Kannō-Sōe Mutual Dependence with Claude">
+        <div class="option-grid" aria-label="Use Kannō-Sōe Mutual Dependence with an AI">
           <section class="option-card snapshot-card" aria-labelledby="snapshotTitle">
             <p class="eyebrow">Frozen snapshot</p>
             <h2 id="snapshotTitle">Download the snapshot</h2>
@@ -67,18 +67,14 @@
                 <input type="checkbox" name="snapshot-module" value="glossary">
                 <span>Glossary</span>
               </label>
-              <label>
-                <input type="checkbox" name="snapshot-module" value="reading">
-                <span>Reading</span>
-              </label>
             </fieldset>
             <ol>
-              <li>Download the text snapshot.</li>
-              <li>Drag it into a Claude chat or add it to a Claude Project.</li>
+              <li>Download the Markdown snapshot.</li>
+              <li>Drag it into an AI chat or add it to an AI project workspace.</li>
               <li id="snapshotPromptHint">Ask about the Kannō-Sōe Mutual Dependence theory and code.</li>
             </ol>
             <div class="snapshot-actions">
-              <a class="action-link primary-action" href="/context/kanno-soe.txt" id="snapshotDownload" download>
+              <a class="action-link primary-action" href="/context/kanno-soe.md" id="snapshotDownload" download>
                 Download snapshot
               </a>
               <button class="action-link secondary-action" id="copySnapshotButton" type="button">
@@ -92,20 +88,20 @@
             <p class="eyebrow">Live repository</p>
             <h2 id="connectorTitle">Connect the repo directly</h2>
             <p>
-              Use Claude's GitHub connector with
+              Use an AI assistant's GitHub connector with
               <a href="https://github.com/kanno-soe/kanno-soe" id="repoLink" rel="noreferrer">https://github.com/kanno-soe/kanno-soe</a>.
             </p>
             <ol>
-              <li>Open Claude with the GitHub connector available.</li>
+              <li>Open an AI assistant with a GitHub connector available.</li>
               <li>Connect the public kanno-soe repository.</li>
-              <li>Ask Claude to answer from the connected repo.</li>
+              <li>Ask the AI to answer from the connected repo.</li>
             </ol>
             <div class="copy-row">
               <button class="action-link secondary-action" id="copyRepoButton" type="button">Copy repo URL</button>
               <span class="copy-confirmation" id="copyRepoStatus" role="status" aria-live="polite"></span>
             </div>
             <p class="drift-note">
-              Claude reads a snapshot of <code>main</code> when the repo is added. Its view can fall behind the repo over time, so click 'Sync now' periodically to stay current.
+              The connector reads a snapshot of <code>main</code> when the repo is added. Its view can fall behind the repo over time, so sync it periodically to stay current.
             </p>
           </section>
         </div>
@@ -137,7 +133,7 @@
 
       <footer class="site-footer">
         <span>Configured ARTIFACT_URL:</span>
-        <a href="https://claude.ai/" id="artifactLink" rel="noreferrer">configured Claude artifact</a>
+        <a href="https://claude.ai/" id="artifactLink" rel="noreferrer">configured AI artifact</a>
         <span aria-hidden="true">·</span>
         <a href="/privacy">Privacy</a>
       </footer>

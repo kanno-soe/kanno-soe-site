@@ -31,11 +31,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Fetch current Claude prices
+      - name: Fetch current model prices
         run: |
           node scripts/fetch-pricing.mjs --github-env | tee pricing.log
           {
-            echo "### Claude pricing"
+            echo "### AI model pricing"
             cat pricing.log
           } >> "$GITHUB_STEP_SUMMARY"
 

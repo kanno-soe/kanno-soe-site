@@ -6,26 +6,23 @@ import { fileURLToPath } from "node:url";
 
 const DEFAULT_MAX_TOKENS = 600000;
 const EXPOSITION_DIR = "Exposition";
-const EXPOSITION_READING_ORDER = [
+const EXPOSITION_FILE_ORDER = [
   "Exposition/Preamble.md",
   "Exposition/Contents.md",
   "Exposition/Theory.md",
   "Exposition/Theorems.md",
   "Exposition/Identification.md",
   "Exposition/Assumptions.md",
-  "Exposition/Glossary.md",
-  "Exposition/Reading.md"
+  "Exposition/Glossary.md"
 ];
 const SNAPSHOT_MODULES = [
   { id: "code", label: "Code" },
   { id: "exposition", label: "Exposition" },
-  { id: "glossary", label: "Glossary" },
-  { id: "reading", label: "Reading" }
+  { id: "glossary", label: "Glossary" }
 ];
 const DEFAULT_SNAPSHOT_SELECTION = ["code", "exposition"];
 const CODE_DIRECTORY_ORDER = ["Signature", "Consequences", "Doctrines", "Identification", "Meta", "Gen"];
 const SNAPSHOT_GLOSSARY_ORDER = ["Exposition/Glossary.md"];
-const SNAPSHOT_READING_ORDER = ["Exposition/Reading.md"];
 
 function usage() {
   console.error(
@@ -135,8 +132,8 @@ function collectExpositionFiles(root) {
 
 function expositionOrder(rel) {
   const normalizedRel = rel.toLowerCase();
-  const index = EXPOSITION_READING_ORDER.findIndex((entry) => entry.toLowerCase() === normalizedRel);
-  return index === -1 ? EXPOSITION_READING_ORDER.length : index;
+  const index = EXPOSITION_FILE_ORDER.findIndex((entry) => entry.toLowerCase() === normalizedRel);
+  return index === -1 ? EXPOSITION_FILE_ORDER.length : index;
 }
 
 function compareExpositionFiles(a, b) {
@@ -182,14 +179,13 @@ function collectMarkdownModuleFiles(expositionRoot, expositionFiles, orderedPath
 }
 
 function buildSnapshotModules(source, expositionRoot, expositionFiles) {
-  const excludedFromExposition = new Set([...SNAPSHOT_GLOSSARY_ORDER, ...SNAPSHOT_READING_ORDER]);
+  const excludedFromExposition = new Set(SNAPSHOT_GLOSSARY_ORDER);
   return {
     code: collectCodeFiles(source),
     exposition: expositionFiles
       .filter((rel) => !excludedFromExposition.has(rel))
       .map((rel) => moduleFileEntry(expositionRoot, rel)),
-    glossary: collectMarkdownModuleFiles(expositionRoot, expositionFiles, SNAPSHOT_GLOSSARY_ORDER),
-    reading: collectMarkdownModuleFiles(expositionRoot, expositionFiles, SNAPSHOT_READING_ORDER)
+    glossary: collectMarkdownModuleFiles(expositionRoot, expositionFiles, SNAPSHOT_GLOSSARY_ORDER)
   };
 }
 
@@ -218,7 +214,7 @@ function snapshotSlug(selectedIds) {
 
 function snapshotFileName(selectedIds) {
   const slug = snapshotSlug(selectedIds);
-  return slug === "code-exposition" ? "kanno-soe.txt" : `kanno-soe-${slug}.txt`;
+  return slug === "code-exposition" ? "kanno-soe.md" : `kanno-soe-${slug}.md`;
 }
 
 function moduleSelectionMask(index) {
@@ -532,7 +528,7 @@ writeFileSync(outPath, moduleText, "utf8");
 const contextDir = path.join(projectRoot, "public", "context");
 mkdirSync(contextDir, { recursive: true });
 
-const snapshotPath = path.join(contextDir, "kanno-soe.txt");
+const snapshotPath = path.join(contextDir, "kanno-soe.md");
 const expositionPath = path.join(contextDir, "exposition.md");
 const expositionHtmlPath = path.join(contextDir, "exposition.html");
 const manifestPath = path.join(contextDir, "manifest.json");

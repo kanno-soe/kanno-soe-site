@@ -275,7 +275,7 @@ pre,
 
 .snapshot-picker {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
   min-width: 0;
   margin: 0;
@@ -1096,10 +1096,6 @@ textarea::placeholder {
     width: 100%;
   }
 
-  .snapshot-picker {
-    grid-template-columns: 1fr;
-  }
-
   .snapshot-actions {
     align-items: stretch;
     flex-direction: column;
@@ -1145,6 +1141,24 @@ textarea::placeholder {
 
   .option-card {
     padding: 18px;
+  }
+
+  .snapshot-picker {
+    gap: 6px;
+    padding-inline: 8px;
+  }
+
+  .snapshot-picker label {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    justify-items: center;
+    font-size: 0.78rem;
+    text-align: center;
+  }
+
+  .snapshot-picker input {
+    width: 16px;
+    height: 16px;
   }
 
   .markdown-body {

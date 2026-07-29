@@ -331,7 +331,7 @@ function renderLimitNotice(reset, artifactUrl, selfServeUrl) {
   label.textContent = "KSMD";
   const body = document.createElement("div");
   body.className = "message-body";
-  body.append("The spend limit resets at ", reset, ". Meanwhile, use the public artifact on your own Claude account: ");
+  body.append("The spend limit resets at ", reset, ". Meanwhile, use the public artifact with your own AI account: ");
   const link = document.createElement("a");
   link.href = artifactUrl;
   link.rel = "noreferrer";
