@@ -147,6 +147,8 @@ approximate time window.
   `Exposition/` directory beneath the self-serve choices.
 - Requests to `/` that prefer `text/markdown` should receive the raw Exposition
   Markdown with source and per-module `.md` download links first.
+- Direct `/context/*.md` responses should declare
+  `Content-Type: text/markdown; charset=utf-8`.
 - With default `CHAT_ENABLED=false`, `POST /api/session` and `POST /api/chat`
   should return `503` with `error: "chat_disabled"`.
 - With default `CHAT_ENABLED=false`, the warm cron should skip cache warming.
