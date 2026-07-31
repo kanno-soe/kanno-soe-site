@@ -129,20 +129,16 @@ function prependText(prefix: string, body: ReadableStream<Uint8Array>): Readable
   });
 }
 
-function markdownPreamble(request: Request, env: Env): string {
+function markdownPreamble(request: Request): string {
   const origin = new URL(request.url).origin;
   return [
     "# Kannō-Sōe Mutual Dependence (KSMD)",
     "",
     "A formal-theory reconstruction of Zen metaphysics and soteriology.",
     "",
-    "Kannō-Sōe Mutual Dependence (KSMD) develops a theory of joining, causal direction, and chosen action as a Lean 4 formalization with an accompanying Exposition.",
-    "",
-    `This site is frozen to source commit \`${sourceCommit(env)}\`.`,
-    "",
     "## Source and downloads",
     "",
-    `- [Source repository](${SOURCE_REPO_URL})`,
+    `- [Repository](${SOURCE_REPO_URL})`,
     `- [Download Code](${origin}/context/kanno-soe-code.md)`,
     `- [Download Exposition](${origin}/context/kanno-soe-exposition.md)`,
     `- [Download the default Code + Exposition snapshot](${origin}/context/kanno-soe.md)`,
@@ -201,8 +197,8 @@ async function markdownHome(request: Request, env: Env): Promise<Response> {
     request.method === "HEAD"
       ? null
       : exposition.body
-        ? prependText(markdownPreamble(request, env), exposition.body)
-        : markdownPreamble(request, env);
+        ? prependText(markdownPreamble(request), exposition.body)
+        : markdownPreamble(request);
   return withAcceptVary(
     withSecurityHeaders(
       new Response(body, {
@@ -451,7 +447,6 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
     return handleChat(request, env, ctx);
   }
   if (url.pathname.startsWith("/admin/")) return handleAdmin(request, env);
-  if (request.method === "GET" && url.pathname === "/privacy") return fetchAssetPage(request, env, "/privacy.html");
   if (
     (request.method === "GET" || request.method === "HEAD") &&
     url.pathname === "/"

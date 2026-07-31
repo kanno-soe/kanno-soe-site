@@ -221,7 +221,7 @@ function snapshotHeader({ commit, builtAt, repoUrl, files, selectedIds }) {
     "Kannō-Sōe Mutual Dependence (KSMD) context snapshot",
     `Source commit: ${commit}`,
     `Built at: ${builtAt}`,
-    `Frozen snapshot of ${repoUrl}.`,
+    `Repository snapshot of ${repoUrl}.`,
     `Selected modules: ${selectedLabels.length > 0 ? selectedLabels.join(", ") : "none"}`,
     "",
     "Files:",
@@ -452,7 +452,6 @@ function renderMarkdownFiles(root, files) {
       const id = `markdown-${slugify(rel)}`;
       return [
         `<section class="markdown-file" id="${id}">`,
-        `<p class="markdown-file-path">${escapeHtml(rel)}</p>`,
         renderMarkdown(text, rel),
         "</section>"
       ].join("\n");

@@ -12,7 +12,7 @@ so they can use their own AI tools instead.
 1. Create the Cloudflare KV namespace used by `STATE` and put its ID in
    `wrangler.toml`.
 2. Leave `CHAT_ENABLED=false` unless the hosted chat is affordable again.
-3. Set `ARTIFACT_URL` and replace `PRIVACY_CONTACT` in `public/privacy.html`.
+3. Set `ARTIFACT_URL`.
 4. For the future hosted chat path, create a Turnstile widget, set
    `TURNSTILE_SITE_KEY` in `wrangler.toml`, and add Worker secrets:
 
@@ -110,11 +110,9 @@ files are generated from the source checkout.
 
 Requests to `/` that prefer `text/markdown` over `text/html` receive the raw
 Exposition Markdown. The response begins with the site's introductory context,
-source repository, frozen commit, and individual Code and Exposition download
-links.
+repository link, and individual Code and Exposition download links.
 
-The page fetches `/context/manifest.json` for commit/date/size metadata and
-`/api/config` so the configured `ARTIFACT_URL` remains visible in the footer.
+The page fetches `/context/manifest.json` for commit/date/size metadata.
 
 ## Hosted Chat
 

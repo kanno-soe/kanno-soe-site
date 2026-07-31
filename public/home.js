@@ -5,12 +5,10 @@ const copySnapshotButton = document.querySelector("#copySnapshotButton");
 const copySnapshotStatus = document.querySelector("#copySnapshotStatus");
 const snapshotModuleInputs = Array.from(document.querySelectorAll('input[name="snapshot-module"]'));
 const repoLink = document.querySelector("#repoLink");
-const artifactLink = document.querySelector("#artifactLink");
 const expositionContent = document.querySelector("#expositionContent");
 const expositionTocList = document.querySelector("#expositionTocList");
 const copyRepoButton = document.querySelector("#copyRepoButton");
 const copyRepoStatus = document.querySelector("#copyRepoStatus");
-const commitShort = document.querySelector("#commitShort");
 
 let resetCopyTimer = 0;
 let resetSnapshotCopyTimer = 0;
@@ -23,7 +21,7 @@ async function init() {
   wireCopyButton();
   wireSnapshotCopyButton();
   wireSnapshotPicker();
-  const results = await Promise.allSettled([loadManifest(), loadConfig(), loadExposition()]);
+  const results = await Promise.allSettled([loadManifest(), loadExposition()]);
   for (const result of results) {
     if (result.status === "rejected") console.warn(result.reason);
   }
@@ -39,7 +37,6 @@ async function loadManifest() {
 
   applyDefaultSnapshotSelection(manifest);
   updateSnapshotSelection();
-  if (commitShort && commit) commitShort.textContent = shortCommit(commit);
 
   if (repoLink && typeof manifest.repoUrl === "string" && manifest.repoUrl.trim()) {
     repoLink.href = manifest.repoUrl;
@@ -163,17 +160,6 @@ function formatPlainList(items) {
   if (items.length <= 1) return items[0] ?? "";
   if (items.length === 2) return `${items[0]} and ${items[1]}`;
   return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
-}
-
-async function loadConfig() {
-  const response = await fetch("/api/config", { cache: "no-store" });
-  if (!response.ok) throw new Error("Site config could not be loaded.");
-
-  const config = await response.json();
-  if (artifactLink && typeof config.artifactUrl === "string" && config.artifactUrl.trim()) {
-    artifactLink.href = config.artifactUrl;
-    artifactLink.textContent = config.artifactUrl;
-  }
 }
 
 async function loadExposition() {
@@ -562,10 +548,6 @@ function slugify(value) {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "") || "section"
   );
-}
-
-function shortCommit(value) {
-  return value.length > 12 ? value.slice(0, 12) : value;
 }
 
 function formatDate(value) {

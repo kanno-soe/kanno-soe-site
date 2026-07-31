@@ -124,11 +124,7 @@ h2 {
 
 code,
 pre,
-.header-meta,
-.snapshot-meta,
-.markdown-file-path,
-.version-line,
-.contact-token {
+.snapshot-meta {
   font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
 }
 
@@ -164,18 +160,6 @@ pre,
   text-decoration: none;
 }
 
-.header-meta {
-  margin: 0;
-  color: var(--steel);
-  font-size: 0.86rem;
-  line-height: 1.4;
-  text-align: right;
-}
-
-#commitShort {
-  color: var(--straw);
-}
-
 .seam {
   width: 100%;
   height: 2px;
@@ -187,10 +171,6 @@ pre,
 }
 
 .hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 430px);
-  gap: clamp(26px, 6vw, 72px);
-  align-items: end;
   margin-bottom: 30px;
 }
 
@@ -205,24 +185,6 @@ pre,
   font-weight: 600;
   letter-spacing: 0;
   text-transform: uppercase;
-}
-
-.hero-copy {
-  color: var(--steel);
-  font-size: 1.05rem;
-  line-height: 1.64;
-}
-
-.hero-copy p {
-  margin-bottom: 1rem;
-}
-
-.hero-copy p:last-child {
-  margin-bottom: 0;
-}
-
-.status-copy {
-  color: var(--ink);
 }
 
 .option-grid {
@@ -606,14 +568,6 @@ pre,
   max-width: 72ch;
 }
 
-.markdown-file-path {
-  margin-bottom: 16px;
-  color: var(--straw);
-  font-size: 0.82rem;
-  line-height: 1.45;
-  overflow-wrap: anywhere;
-}
-
 .markdown-body h1,
 .markdown-body h2,
 .markdown-body h3,
@@ -801,24 +755,6 @@ pre,
   padding: 0 0 22px;
   color: var(--steel);
   font-size: 0.86rem;
-}
-
-.privacy-page {
-  width: min(760px, calc(100vw - 40px));
-  margin: 48px auto;
-}
-
-.privacy-page h1 {
-  font-size: clamp(2.4rem, 7vw, 4.4rem);
-}
-
-.privacy-page .seam {
-  margin: 18px 0 26px;
-}
-
-.version-line,
-.contact-token {
-  color: var(--straw);
 }
 
 .chat-main {
@@ -1082,10 +1018,6 @@ textarea::placeholder {
     gap: 10px;
   }
 
-  .header-meta {
-    text-align: left;
-  }
-
   .option-grid {
     grid-template-columns: 1fr;
   }
@@ -1134,8 +1066,7 @@ textarea::placeholder {
   .site-footer,
   .self-serve-main,
   .chat-main,
-  .composer,
-  .privacy-page {
+  .composer {
     width: min(100% - 24px, var(--page-width));
   }
 
