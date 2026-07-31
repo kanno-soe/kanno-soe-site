@@ -360,6 +360,16 @@ function renderTable(lines, start, currentRel) {
   return { html: `<table>${head}${body}</table>`, next: index };
 }
 
+function renderParagraph(lines, currentRel) {
+  return lines
+    .map((line, index) => {
+      const html = renderInline(line.trim(), currentRel);
+      if (index === lines.length - 1) return html;
+      return `${html}${/ {2,}$/.test(line) ? "<br>\n" : " "}`;
+    })
+    .join("");
+}
+
 function renderMarkdown(markdown, currentRel) {
   const lines = markdown.replace(/\r\n/g, "\n").split("\n");
   const out = [];
@@ -434,11 +444,11 @@ function renderMarkdown(markdown, currentRel) {
 
     const paragraph = [];
     while (index < lines.length && !isBlank(lines[index]) && !isBlockStart(lines, index)) {
-      paragraph.push(lines[index].trim());
+      paragraph.push(lines[index]);
       index += 1;
     }
     if (paragraph.length > 0) {
-      out.push(`<p>${renderInline(paragraph.join(" "), currentRel)}</p>`);
+      out.push(`<p>${renderParagraph(paragraph, currentRel)}</p>`);
     }
   }
 

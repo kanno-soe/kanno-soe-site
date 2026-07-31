@@ -7,6 +7,7 @@
     "build:context": "node scripts/build-context.mjs",
     "fetch:pricing": "node scripts/fetch-pricing.mjs",
     "check": "tsc --noEmit",
+    "test": "node --test",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy"
   },
