@@ -145,7 +145,6 @@ function markdownPreamble(request: Request, env: Env): string {
     `- [Source repository](${SOURCE_REPO_URL})`,
     `- [Download Code](${origin}/context/kanno-soe-code.md)`,
     `- [Download Exposition](${origin}/context/kanno-soe-exposition.md)`,
-    `- [Download Glossary](${origin}/context/kanno-soe-glossary.md)`,
     `- [Download the default Code + Exposition snapshot](${origin}/context/kanno-soe.md)`,
     "",
     "---",

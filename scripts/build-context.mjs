@@ -17,12 +17,10 @@ const EXPOSITION_FILE_ORDER = [
 ];
 const SNAPSHOT_MODULES = [
   { id: "code", label: "Code" },
-  { id: "exposition", label: "Exposition" },
-  { id: "glossary", label: "Glossary" }
+  { id: "exposition", label: "Exposition" }
 ];
 const DEFAULT_SNAPSHOT_SELECTION = ["code", "exposition"];
 const CODE_DIRECTORY_ORDER = ["Signature", "Consequences", "Doctrines", "Identification", "Meta", "Gen"];
-const SNAPSHOT_GLOSSARY_ORDER = ["Exposition/Glossary.md"];
 
 function usage() {
   console.error(
@@ -171,21 +169,10 @@ function collectCodeFiles(source) {
     .map((rel) => moduleFileEntry(source, rel));
 }
 
-function collectMarkdownModuleFiles(expositionRoot, expositionFiles, orderedPaths) {
-  const available = new Set(expositionFiles);
-  return orderedPaths
-    .filter((rel) => available.has(rel))
-    .map((rel) => moduleFileEntry(expositionRoot, rel));
-}
-
 function buildSnapshotModules(source, expositionRoot, expositionFiles) {
-  const excludedFromExposition = new Set(SNAPSHOT_GLOSSARY_ORDER);
   return {
     code: collectCodeFiles(source),
-    exposition: expositionFiles
-      .filter((rel) => !excludedFromExposition.has(rel))
-      .map((rel) => moduleFileEntry(expositionRoot, rel)),
-    glossary: collectMarkdownModuleFiles(expositionRoot, expositionFiles, SNAPSHOT_GLOSSARY_ORDER)
+    exposition: expositionFiles.map((rel) => moduleFileEntry(expositionRoot, rel))
   };
 }
 

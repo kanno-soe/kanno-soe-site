@@ -149,7 +149,6 @@ function updateSnapshotPromptHint(modules) {
     .map((module) => {
       if (module === "exposition") return "theory";
       if (module === "code") return "code";
-      if (module === "glossary") return "glossary";
       return "";
     })
     .filter(Boolean);
