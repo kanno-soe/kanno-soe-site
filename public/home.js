@@ -562,10 +562,10 @@ function formatDate(value) {
 
 function formatBytes(value) {
   if (!Number.isFinite(value) || value <= 0) return "";
-  return `${Math.round(value).toLocaleString()} bytes`;
+  return `${Math.ceil(value / 1000).toLocaleString()} kb`;
 }
 
 function formatTokens(value) {
   if (!Number.isFinite(value) || value <= 0) return "";
-  return `~${Math.round(value).toLocaleString()} tokens`;
+  return `~${Math.ceil(value / 1000).toLocaleString()}k tokens`;
 }
