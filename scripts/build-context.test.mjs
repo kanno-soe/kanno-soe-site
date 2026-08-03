@@ -8,13 +8,15 @@ import {
   rmSync,
   writeFileSync
 } from "node:fs";
-import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-test("renders Markdown hard breaks inside blockquotes", (t) => {
-  const tempRoot = mkdtempSync(path.join(tmpdir(), "kanno-soe-context-test-"));
+test("renders exposition Markdown with markdown-it", (t) => {
+  const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
+  const tempParent = path.join(repositoryRoot, "node_modules", ".cache");
+  mkdirSync(tempParent, { recursive: true });
+  const tempRoot = mkdtempSync(path.join(tempParent, "kanno-soe-context-test-"));
   t.after(() => rmSync(tempRoot, { recursive: true, force: true }));
 
   const projectRoot = path.join(tempRoot, "site");
@@ -29,7 +31,35 @@ test("renders Markdown hard breaks inside blockquotes", (t) => {
   copyFileSync(fileURLToPath(new URL("./build-context.mjs", import.meta.url)), path.join(scriptsRoot, "build-context.mjs"));
   writeFileSync(
     path.join(expositionRoot, "Preamble.md"),
-    "> line 1  \n> line 2\n\n> soft line 1\n> soft line 2\n",
+    [
+      "# Parser fixture",
+      "",
+      "> line 1  ",
+      "> line 2",
+      "",
+      "> soft line 1",
+      "> soft line 2",
+      "",
+      "- outer",
+      "  - inner",
+      "",
+      "[Theory][theory]",
+      "",
+      "[Named section](Theory.md#named-section)",
+      "",
+      "[Unsafe link](javascript:alert(1))",
+      "",
+      "![Unsafe image](data:image/png;base64,AAAA)",
+      "",
+      "[theory]: Theory.md",
+      "",
+      "<script>alert(\"nope\")</script>",
+      "",
+      "| Name | Value |",
+      "| --- | --- |",
+      "| one | **two** |",
+      ""
+    ].join("\n"),
     "utf8"
   );
 
@@ -59,6 +89,14 @@ test("renders Markdown hard breaks inside blockquotes", (t) => {
   ]);
 
   const html = readFileSync(path.join(projectRoot, "public", "context", "exposition.html"), "utf8");
-  assert.match(html, /<blockquote><p>line 1<br>\nline 2<\/p><\/blockquote>/);
-  assert.match(html, /<blockquote><p>soft line 1 soft line 2<\/p><\/blockquote>/);
+  assert.match(html, /<blockquote>\s*<p>line 1<br>\nline 2<\/p>\s*<\/blockquote>/);
+  assert.match(html, /<blockquote>\s*<p>soft line 1\s+soft line 2<\/p>\s*<\/blockquote>/);
+  assert.match(html, /<li>outer\s*<ul>\s*<li>inner<\/li>\s*<\/ul>\s*<\/li>/);
+  assert.match(html, /<a href="#markdown-exposition-theory-md" rel="noreferrer">Theory<\/a>/);
+  assert.match(html, /<a href="#named-section" rel="noreferrer">Named section<\/a>/);
+  assert.match(html, /<table>[\s\S]*<strong>two<\/strong>[\s\S]*<\/table>/);
+  assert.match(html, /&lt;script&gt;alert\(&quot;nope&quot;\)&lt;\/script&gt;/);
+  assert.doesNotMatch(html, /<script>/);
+  assert.doesNotMatch(html, /<a href="javascript:/);
+  assert.doesNotMatch(html, /<img[^>]+src="data:/);
 });

@@ -85,7 +85,8 @@ pnpm run check
 
 `node scripts/build-context.mjs` reads the committed Markdown from the source
 checkout's `Exposition/` directory. Lines containing the `GENERATED` marker are
-removed from Markdown included in the generated artifacts.
+removed from Markdown included in the generated artifacts. Exposition HTML is
+rendered with `markdown-it`; raw HTML in the source Markdown remains escaped.
 `src/context.generated.ts` is intentionally ignored because every deploy freezes
 the current source checkout. The same build also writes the default modular
 snapshot at `public/context/kanno-soe.md`, all alternate module-selection

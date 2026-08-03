@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import MarkdownIt from "markdown-it";
 
 const DEFAULT_MAX_TOKENS = 600000;
 const EXPOSITION_DIR = "Exposition";
@@ -245,28 +246,8 @@ function snapshotStats(text) {
   };
 }
 
-function escapeHtml(value) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
-function escapeAttribute(value) {
-  return escapeHtml(value).replace(/`/g, "&#96;");
-}
-
-function sanitizeLinkTarget(value) {
-  const target = value.trim();
-  const lower = target.toLowerCase();
-  if (lower.startsWith("javascript:") || lower.startsWith("data:")) return "#";
-  return target;
-}
-
 function resolveMarkdownLink(value, currentRel) {
-  const target = sanitizeLinkTarget(value);
+  const target = value.trim();
   const match = target.match(/^([^?#]+\.md)(#[^?]+)?$/i);
   if (!match || !currentRel) return target;
 
@@ -284,175 +265,34 @@ function slugify(value) {
   );
 }
 
-function renderInline(value, currentRel) {
-  return escapeHtml(value)
-    .replace(/`([^`]+)`/g, "<code>$1</code>")
-    .replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+&quot;[^&]*&quot;)?\)/g, (_match, alt, src) => {
-      const safeSrc = escapeAttribute(sanitizeLinkTarget(src));
-      return `<img src="${safeSrc}" alt="${alt}">`;
-    })
-    .replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+&quot;[^&]*&quot;)?\)/g, (_match, text, href) => {
-      const safeHref = escapeAttribute(resolveMarkdownLink(href, currentRel));
-      return `<a href="${safeHref}" rel="noreferrer">${text}</a>`;
-    })
-    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*([^*]+)\*/g, "<em>$1</em>");
-}
-
-function isBlank(line) {
-  return line.trim() === "";
-}
-
-function isHorizontalRule(line) {
-  return /^\s{0,3}([-*_])(?:\s*\1){2,}\s*$/.test(line);
-}
-
-function isListItem(line) {
-  return /^\s*(?:[-*+]\s+|\d+\.\s+)/.test(line);
-}
-
-function isTableDivider(line) {
-  return /^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line);
-}
-
-function isTableStart(lines, index) {
-  return index + 1 < lines.length && lines[index].includes("|") && isTableDivider(lines[index + 1]);
-}
-
-function isBlockStart(lines, index) {
-  const line = lines[index];
-  return (
-    /^(```+|~~~+)/.test(line) ||
-    /^\s{0,3}#{1,6}\s+/.test(line) ||
-    /^\s{0,3}>/.test(line) ||
-    isHorizontalRule(line) ||
-    isListItem(line) ||
-    isTableStart(lines, index)
-  );
-}
-
-function tableCells(line) {
-  return line
-    .trim()
-    .replace(/^\|/, "")
-    .replace(/\|$/, "")
-    .split("|")
-    .map((cell) => cell.trim());
-}
-
-function renderTable(lines, start, currentRel) {
-  const header = tableCells(lines[start]);
-  let index = start + 2;
-  const rows = [];
-  while (index < lines.length && lines[index].includes("|") && !isBlank(lines[index])) {
-    rows.push(tableCells(lines[index]));
-    index += 1;
-  }
-
-  const head = `<thead><tr>${header.map((cell) => `<th>${renderInline(cell, currentRel)}</th>`).join("")}</tr></thead>`;
-  const bodyRows = rows.map((row) => {
-    const cells = header
-      .map((_cell, cellIndex) => `<td>${renderInline(row[cellIndex] ?? "", currentRel)}</td>`)
-      .join("");
-    return `<tr>${cells}</tr>`;
+function createMarkdownRenderer() {
+  const renderer = new MarkdownIt({
+    breaks: false,
+    html: false,
+    linkify: false,
+    typographer: false
   });
-  const body = bodyRows.length > 0 ? `<tbody>${bodyRows.join("")}</tbody>` : "";
-  return { html: `<table>${head}${body}</table>`, next: index };
+  const renderLinkOpen =
+    renderer.renderer.rules.link_open ??
+    ((tokens, index, options, _env, self) => self.renderToken(tokens, index, options));
+  const validateLink = renderer.validateLink.bind(renderer);
+
+  renderer.validateLink = (target) =>
+    !target.trim().toLowerCase().startsWith("data:") && validateLink(target);
+  renderer.renderer.rules.link_open = (tokens, index, options, env, self) => {
+    const href = tokens[index].attrGet("href");
+    if (href !== null) tokens[index].attrSet("href", resolveMarkdownLink(href, env.currentRel));
+    tokens[index].attrSet("rel", "noreferrer");
+    return renderLinkOpen(tokens, index, options, env, self);
+  };
+
+  return renderer;
 }
 
-function renderParagraph(lines, currentRel) {
-  return lines
-    .map((line, index) => {
-      const html = renderInline(line.trim(), currentRel);
-      if (index === lines.length - 1) return html;
-      return `${html}${/ {2,}$/.test(line) ? "<br>\n" : " "}`;
-    })
-    .join("");
-}
+const markdownRenderer = createMarkdownRenderer();
 
 function renderMarkdown(markdown, currentRel) {
-  const lines = markdown.replace(/\r\n/g, "\n").split("\n");
-  const out = [];
-  let index = 0;
-
-  while (index < lines.length) {
-    const line = lines[index];
-    if (isBlank(line)) {
-      index += 1;
-      continue;
-    }
-
-    const fence = line.match(/^(```+|~~~+)\s*(.*)$/);
-    if (fence) {
-      const marker = fence[1][0].repeat(3);
-      const language = fence[2].trim().split(/\s+/)[0] ?? "";
-      index += 1;
-      const code = [];
-      while (index < lines.length && !lines[index].startsWith(marker)) {
-        code.push(lines[index]);
-        index += 1;
-      }
-      if (index < lines.length) index += 1;
-      const className = language ? ` class="language-${escapeAttribute(language)}"` : "";
-      out.push(`<pre><code${className}>${escapeHtml(code.join("\n"))}</code></pre>`);
-      continue;
-    }
-
-    const heading = line.match(/^\s{0,3}(#{1,6})\s+(.+?)\s*#*\s*$/);
-    if (heading) {
-      const level = heading[1].length;
-      out.push(`<h${level}>${renderInline(heading[2], currentRel)}</h${level}>`);
-      index += 1;
-      continue;
-    }
-
-    if (isHorizontalRule(line)) {
-      out.push("<hr>");
-      index += 1;
-      continue;
-    }
-
-    if (isTableStart(lines, index)) {
-      const table = renderTable(lines, index, currentRel);
-      out.push(table.html);
-      index = table.next;
-      continue;
-    }
-
-    if (/^\s{0,3}>/.test(line)) {
-      const quoted = [];
-      while (index < lines.length && /^\s{0,3}>/.test(lines[index])) {
-        quoted.push(lines[index].replace(/^\s{0,3}>\s?/, ""));
-        index += 1;
-      }
-      out.push(`<blockquote>${renderMarkdown(quoted.join("\n"), currentRel)}</blockquote>`);
-      continue;
-    }
-
-    if (isListItem(line)) {
-      const ordered = /^\s*\d+\.\s+/.test(line);
-      const itemPattern = ordered ? /^\s*\d+\.\s+/ : /^\s*[-*+]\s+/;
-      const items = [];
-      while (index < lines.length && itemPattern.test(lines[index])) {
-        items.push(lines[index].replace(itemPattern, ""));
-        index += 1;
-      }
-      const tag = ordered ? "ol" : "ul";
-      out.push(`<${tag}>${items.map((item) => `<li>${renderInline(item, currentRel)}</li>`).join("")}</${tag}>`);
-      continue;
-    }
-
-    const paragraph = [];
-    while (index < lines.length && !isBlank(lines[index]) && !isBlockStart(lines, index)) {
-      paragraph.push(lines[index]);
-      index += 1;
-    }
-    if (paragraph.length > 0) {
-      out.push(`<p>${renderParagraph(paragraph, currentRel)}</p>`);
-    }
-  }
-
-  return out.join("\n");
+  return markdownRenderer.render(markdown.replace(/\r\n/g, "\n"), { currentRel }).trimEnd();
 }
 
 function renderMarkdownFiles(root, files) {
