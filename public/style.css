@@ -665,6 +665,21 @@ pre,
   white-space: pre;
 }
 
+.markdown-body .math-block {
+  max-width: 100%;
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.25rem;
+  overflow-x: auto;
+  color: var(--ink);
+  text-align: center;
+}
+
+.markdown-body .math-block .katex {
+  display: inline-block;
+  min-width: max-content;
+  font-size: 1.1em;
+}
+
 .markdown-body table {
   width: 100%;
   max-width: 68rem;

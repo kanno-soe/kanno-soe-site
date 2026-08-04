@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import katex from "katex";
 import MarkdownIt from "markdown-it";
 
 const DEFAULT_MAX_TOKENS = 600000;
@@ -275,6 +276,9 @@ function createMarkdownRenderer() {
   const renderLinkOpen =
     renderer.renderer.rules.link_open ??
     ((tokens, index, options, _env, self) => self.renderToken(tokens, index, options));
+  const renderFence =
+    renderer.renderer.rules.fence ??
+    ((tokens, index, options, _env, self) => self.renderToken(tokens, index, options));
   const validateLink = renderer.validateLink.bind(renderer);
 
   renderer.validateLink = (target) =>
@@ -284,6 +288,20 @@ function createMarkdownRenderer() {
     if (href !== null) tokens[index].attrSet("href", resolveMarkdownLink(href, env.currentRel));
     tokens[index].attrSet("rel", "noreferrer");
     return renderLinkOpen(tokens, index, options, env, self);
+  };
+  renderer.renderer.rules.fence = (tokens, index, options, env, self) => {
+    const token = tokens[index];
+    const language = token.info.trim().split(/\s+/u, 1)[0]?.toLowerCase();
+    if (language !== "math") return renderFence(tokens, index, options, env, self);
+
+    const mathml = katex.renderToString(token.content.trim(), {
+      displayMode: true,
+      output: "mathml",
+      strict: "warn",
+      throwOnError: false,
+      trust: false
+    });
+    return `<div class="math-block">\n${mathml}\n</div>\n`;
   };
 
   return renderer;

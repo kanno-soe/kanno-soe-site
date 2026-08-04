@@ -58,6 +58,16 @@ test("renders exposition Markdown with markdown-it", (t) => {
       "| Name | Value |",
       "| --- | --- |",
       "| one | **two** |",
+      "",
+      "```math",
+      "C_1 \\bowtie \\cdots \\bowtie C_n",
+      "\\quad\\Longleftrightarrow\\quad",
+      "\\bigwedge_{i=1}^{n-1}(C_i\\bowtie C_{i+1})",
+      "```",
+      "",
+      "```lean",
+      "#check Nat.add_comm",
+      "```",
       ""
     ].join("\n"),
     "utf8"
@@ -95,6 +105,10 @@ test("renders exposition Markdown with markdown-it", (t) => {
   assert.match(html, /<a href="#markdown-exposition-theory-md" rel="noreferrer">Theory<\/a>/);
   assert.match(html, /<a href="#named-section" rel="noreferrer">Named section<\/a>/);
   assert.match(html, /<table>[\s\S]*<strong>two<\/strong>[\s\S]*<\/table>/);
+  assert.match(html, /<div class="math-block">\s*<span class="katex"><math[^>]+display="block">/);
+  assert.match(html, /<annotation encoding="application\/x-tex">[\s\S]*\\bowtie[\s\S]*<\/annotation>/);
+  assert.doesNotMatch(html, /<code class="language-math">/);
+  assert.match(html, /<pre><code class="language-lean">#check Nat\.add_comm/);
   assert.match(html, /&lt;script&gt;alert\(&quot;nope&quot;\)&lt;\/script&gt;/);
   assert.doesNotMatch(html, /<script>/);
   assert.doesNotMatch(html, /<a href="javascript:/);
