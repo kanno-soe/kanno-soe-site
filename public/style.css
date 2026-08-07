@@ -98,8 +98,7 @@ a:hover {
   color: var(--temper-blue-strong);
 }
 
-button,
-textarea {
+button {
   font: inherit;
 }
 
@@ -156,14 +155,11 @@ pre,
 .page-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto auto 1fr;
 }
 
 .site-header,
-.site-footer,
-.self-serve-main,
-.chat-main,
-.composer {
+.self-serve-main {
   width: min(var(--page-width), calc(100vw - 40px));
   margin-inline: auto;
 }
@@ -826,215 +822,6 @@ pre,
   height: auto;
 }
 
-.site-footer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  padding: 0 0 22px;
-  color: var(--steel);
-  font-size: 0.86rem;
-}
-
-.chat-main {
-  min-height: 0;
-  display: grid;
-  padding: 20px 0;
-}
-
-.session-chip {
-  display: grid;
-  gap: 4px;
-  max-width: 360px;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--surface);
-  color: var(--steel);
-  font-size: 0.82rem;
-  box-shadow: var(--shadow-soft);
-}
-
-#sessionIdText {
-  color: var(--ink);
-  font-weight: 600;
-}
-
-.consent-panel {
-  align-self: center;
-  justify-self: center;
-  width: min(680px, 100%);
-  padding: clamp(24px, 5vw, 42px);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--surface);
-  box-shadow: var(--shadow-soft);
-}
-
-.consent-copy {
-  color: var(--steel);
-  font-size: 1rem;
-  line-height: 1.62;
-}
-
-.consent-copy h2 {
-  color: var(--ink);
-}
-
-.consent-copy h1 {
-  margin-bottom: 18px;
-  font-size: clamp(2.2rem, 5vw, 3.2rem);
-}
-
-.turnstile-box {
-  min-height: 70px;
-  margin: 18px 0;
-}
-
-.primary-button,
-.send-button {
-  min-height: 44px;
-  border: 0;
-  border-radius: 8px;
-  background: var(--temper-blue);
-  color: white;
-  font-weight: 600;
-}
-
-.primary-button {
-  width: 100%;
-  min-height: 48px;
-  padding: 0 18px;
-}
-
-.send-button {
-  align-self: end;
-  min-width: 88px;
-  min-height: 46px;
-  padding: 0 18px;
-}
-
-.primary-button:hover,
-.send-button:hover {
-  background: var(--temper-blue-strong);
-}
-
-.primary-button:disabled,
-.send-button:disabled {
-  opacity: 0.52;
-}
-
-.config-warning {
-  color: var(--oxide);
-  font-weight: 600;
-}
-
-.messages {
-  min-height: 0;
-  max-height: calc(100vh - 264px);
-  overflow-y: auto;
-  padding: 8px 0 24px;
-}
-
-.empty-state {
-  margin: 16px 0;
-  color: var(--steel);
-  font-family: "IBM Plex Serif", Georgia, "Times New Roman", serif;
-  font-size: 1.3rem;
-}
-
-.message {
-  display: grid;
-  grid-template-columns: 132px minmax(0, 1fr);
-  gap: 18px;
-  padding: 18px 0;
-  border-top: 1px solid var(--line);
-}
-
-.message-label {
-  color: var(--steel);
-  font-size: 0.82rem;
-  font-weight: 600;
-}
-
-.message-body {
-  max-width: 74ch;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  line-height: 1.6;
-}
-
-.message.notice .message-body {
-  color: var(--oxide);
-  font-weight: 600;
-}
-
-.composer {
-  position: sticky;
-  bottom: 0;
-  padding-bottom: 16px;
-  background: linear-gradient(180deg, rgba(238, 241, 243, 0), var(--paper) 24px);
-}
-
-.scope-banner {
-  padding: 12px 14px;
-  border: 1px solid var(--line);
-  border-bottom: 0;
-  border-radius: 8px 8px 0 0;
-  background: #e4eaee;
-  color: var(--steel);
-  font-size: 0.92rem;
-  line-height: 1.45;
-}
-
-.input-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  padding: 10px;
-  border: 1px solid var(--line);
-  border-radius: 0 0 8px 8px;
-  background: var(--surface);
-}
-
-textarea {
-  width: 100%;
-  max-height: 160px;
-  resize: none;
-  border: 0;
-  outline: 0;
-  padding: 12px 10px;
-  color: var(--ink);
-  line-height: 1.45;
-}
-
-textarea::placeholder {
-  color: #6f7b85;
-}
-
-.noscript {
-  padding: 12px;
-  background: #fff3cd;
-  color: #4d3a00;
-  text-align: center;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.hidden {
-  display: none !important;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -1116,36 +903,11 @@ textarea::placeholder {
     align-items: stretch;
     flex-direction: column;
   }
-
-  .session-chip {
-    width: 100%;
-    max-width: none;
-  }
-
-  .messages {
-    max-height: calc(100vh - 310px);
-  }
-
-  .message {
-    grid-template-columns: 1fr;
-    gap: 6px;
-  }
-
-  .input-row {
-    grid-template-columns: 1fr;
-  }
-
-  .send-button {
-    width: 100%;
-  }
 }
 
 @media (max-width: 360px) {
   .site-header,
-  .site-footer,
-  .self-serve-main,
-  .chat-main,
-  .composer {
+  .self-serve-main {
     width: min(100% - 24px, var(--page-width));
   }
 

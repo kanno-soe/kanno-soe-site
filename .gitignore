@@ -4,6 +4,5 @@ node_modules/
 .wrangler/
 .dev.vars
 dist/
-src/context.generated.ts
 public/context/
 public/vendor/

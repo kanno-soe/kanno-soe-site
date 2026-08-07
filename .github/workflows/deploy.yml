@@ -31,14 +31,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Fetch current model prices
-        run: |
-          node scripts/fetch-pricing.mjs --github-env | tee pricing.log
-          {
-            echo "### AI model pricing"
-            cat pricing.log
-          } >> "$GITHUB_STEP_SUMMARY"
-
       - name: Checkout kanno-soe source
         uses: actions/checkout@v4
         with:
@@ -50,9 +42,7 @@ jobs:
       - name: Build frozen context
         run: |
           set -o pipefail
-          node scripts/build-context.mjs --source source --out src/context.generated.ts --repo-url "https://github.com/${{ github.repository_owner }}/kanno-soe" | tee context.log
-          SOURCE_SHA="$(git -C source rev-parse HEAD)"
-          echo "SOURCE_SHA=$SOURCE_SHA" >> "$GITHUB_ENV"
+          node scripts/build-context.mjs --source source --repo-url "https://github.com/${{ github.repository_owner }}/kanno-soe" | tee context.log
           {
             echo "### kanno-soe context"
             grep -E "SOURCE_COMMIT=|CONTEXT_APPROX_TOKENS=|CONTEXT_SNAPSHOT=|CONTEXT_SNAPSHOT_BYTES=|EXPOSITION_HTML=" context.log
@@ -65,13 +55,7 @@ jobs:
         if: ${{ env.HAS_CLOUDFLARE_API_TOKEN == 'true' }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: >
-          pnpm exec wrangler deploy
-          --var COMMIT_HASH:${SOURCE_SHA}
-          --var PRICE_FABLE_INPUT:${PRICE_FABLE_INPUT}
-          --var PRICE_FABLE_OUTPUT:${PRICE_FABLE_OUTPUT}
-          --var PRICE_HAIKU_INPUT:${PRICE_HAIKU_INPUT}
-          --var PRICE_HAIKU_OUTPUT:${PRICE_HAIKU_OUTPUT}
+        run: pnpm exec wrangler deploy
 
       - name: Skip deploy without Cloudflare token
         if: ${{ env.HAS_CLOUDFLARE_API_TOKEN != 'true' }}

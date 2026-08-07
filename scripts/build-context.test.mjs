@@ -23,10 +23,8 @@ test("renders exposition Markdown with markdown-it", (t) => {
   const sourceRoot = path.join(tempRoot, "source");
   const scriptsRoot = path.join(projectRoot, "scripts");
   const expositionRoot = path.join(sourceRoot, "Exposition");
-  const outputPath = path.join(projectRoot, "src", "context.generated.ts");
   mkdirSync(scriptsRoot, { recursive: true });
   mkdirSync(expositionRoot, { recursive: true });
-  mkdirSync(path.dirname(outputPath), { recursive: true });
 
   copyFileSync(fileURLToPath(new URL("./build-context.mjs", import.meta.url)), path.join(scriptsRoot, "build-context.mjs"));
   writeFileSync(
@@ -99,8 +97,6 @@ test("renders exposition Markdown with markdown-it", (t) => {
     path.join(scriptsRoot, "build-context.mjs"),
     "--source",
     sourceRoot,
-    "--out",
-    outputPath,
     "--repo-url",
     "https://github.com/kanno-soe/kanno-soe"
   ]);

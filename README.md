@@ -1,38 +1,20 @@
 # Kannō-Sōe Mutual Dependence (KSMD) Site
 
-Cloudflare Worker + static self-serve UI for a repository-grounded kanno-soe guide.
-
-The hosted chat code is still present, but disabled by default because the full
-repository context is currently too expensive to serve interactively. The home
-page points visitors to a frozen context snapshot or the public GitHub repository
-so they can use their own AI tools instead.
+Cloudflare Worker + static self-serve UI for using the kanno-soe source with AI
+tools. The home page provides frozen context snapshots, a rendered Exposition,
+and a link to the public GitHub repository.
 
 ## Setup
 
-1. Create the Cloudflare KV namespace used by `STATE` and put its ID in
-   `wrangler.toml`.
-2. Leave `CHAT_ENABLED=false` unless the hosted chat is affordable again.
-3. Set `ARTIFACT_URL`.
-4. For the future hosted chat path, create a Turnstile widget, set
-   `TURNSTILE_SITE_KEY` in `wrangler.toml`, and add Worker secrets:
+Add these GitHub repository secrets:
 
-   ```sh
-   npx wrangler secret put ANTHROPIC_API_KEY
-   npx wrangler secret put ADMIN_TOKEN
-   npx wrangler secret put TURNSTILE_SECRET
-   ```
+- `CLOUDFLARE_API_TOKEN`
+- `SOURCE_READ_TOKEN`
 
-5. Add GitHub repository secrets:
-
-   - `CLOUDFLARE_API_TOKEN`
-   - `SOURCE_READ_TOKEN`
-
-The deploy workflow fetches the current model pricing table, checks out the
-`kanno-soe` source repository, reads its committed Exposition Markdown,
-builds `src/context.generated.ts`, writes
-the public frozen context bundles, typechecks, and deploys with the source
-commit hash injected as `COMMIT_HASH`. Until `CLOUDFLARE_API_TOKEN` is
-configured, the workflow warns and skips only the final deploy step.
+The deploy workflow checks out the `kanno-soe` source repository, reads its
+committed Exposition Markdown, writes the public frozen context bundles,
+typechecks, and deploys. Until `CLOUDFLARE_API_TOKEN` is configured, the
+workflow warns and skips only the final deploy step.
 
 ## Source Repo Notification
 
@@ -79,7 +61,7 @@ Use status code `301`.
 
 ```sh
 pnpm install
-node scripts/build-context.mjs --source ../kanno-soe --out src/context.generated.ts --repo-url https://github.com/kanno-soe/kanno-soe
+node scripts/build-context.mjs --source ../kanno-soe --repo-url https://github.com/kanno-soe/kanno-soe
 pnpm run check
 ```
 
@@ -103,10 +85,9 @@ local OpenType math font. It reveals the MathML and hides the KaTeX HTML only
 when both checks pass, so unsupported browsers, missing fonts, and failed or
 inconclusive probes retain the static HTML rendering.
 
-`src/context.generated.ts` is intentionally ignored because every deploy freezes
-the current source checkout. The same build also writes the default modular
-snapshot at `public/context/kanno-soe.md`, all alternate module-selection
-snapshots, `public/context/exposition.md`, `public/context/exposition.html`,
+The build writes the default modular snapshot at
+`public/context/kanno-soe.md`, all alternate module-selection snapshots,
+`public/context/exposition.md`, `public/context/exposition.html`,
 `public/context/katex-layout.css`, and `public/context/manifest.json`; the
 directory is ignored because those files are generated from the source
 checkout.
@@ -132,51 +113,17 @@ repository link, and individual Code and Exposition download links.
 
 The page fetches `/context/manifest.json` for commit/date/size metadata.
 
-## Hosted Chat
-
-When `CHAT_ENABLED` is not set to literal `true`, `POST /api/session` and
-`POST /api/chat` return `503` with `error: "chat_disabled"`, and the warm cron
-skips cache warming. The chat UI code in `public/app.js` and the Worker chat
-handlers are intentionally retained for a future re-enable.
-
-If the hosted chat is re-enabled, the Worker gates each user message with
-Haiku 4.5, answers on-topic parts with Fable 5, records consented
-transcripts in EU-jurisdiction Durable Objects, and keeps the cached repository
-context warm while the site is active.
-
-## Admin Endpoints
-
-All admin endpoints require `Authorization: Bearer <ADMIN_TOKEN>`.
-
-- `GET /admin/transcripts/search?q=&from=&to=&session=`
-- `DELETE /admin/transcripts?sessions=AAAA-BBBB,CCCC-DDDD`
-- `GET /admin/spend`
-
-Erasure requests can cite either the displayed session ID or a topic plus an
-approximate time window.
-
 ## Acceptance Checks
 
-- `/` should show the self-serve snapshot and GitHub connector choices without
-  loading Turnstile or `public/app.js`.
+- `/` should show the self-serve snapshot and GitHub connector choices.
 - `/` should render every Markdown file under the source repository's
   `Exposition/` directory beneath the self-serve choices.
 - Requests to `/` that prefer `text/markdown` should receive the raw Exposition
   Markdown with source and per-module `.md` download links first.
 - Direct `/context/*.md` responses should declare
   `Content-Type: text/markdown; charset=utf-8`.
-- With default `CHAT_ENABLED=false`, `POST /api/session` and `POST /api/chat`
-  should return `503` with `error: "chat_disabled"`.
-- With default `CHAT_ENABLED=false`, the warm cron should skip cache warming.
-- Admin search/delete and daily retention purge should remove matching sessions.
 - After a local context build, `/context/kanno-soe.md` and the alternate
   module-selection snapshots should exist, and `public/context/exposition.html`
   should contain the rendered Exposition Markdown.
-  `public/context/manifest.json`'s `commit` should equal `SOURCE_COMMIT` in
-  `src/context.generated.ts`.
-
-When `CHAT_ENABLED=true`, the older hosted-chat checks apply: general Buddhism
-must return literal `Mu` after the Haiku gate; mixed prompts must answer only the
-kanno-soe part; a tiny `LIMIT_HOUR_USD` should make `/api/chat` return `429`;
-two close Fable calls should show cache read tokens on the second call; and fresh
-`lastActivity` should allow the warm cron to run.
+  `public/context/manifest.json`'s `commit` should equal the checked-out source
+  commit.

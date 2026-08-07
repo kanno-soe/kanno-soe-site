@@ -8,39 +8,10 @@ directory = "./public/"
 binding = "ASSETS"
 run_worker_first = ["/"]
 
-[[durable_objects.bindings]]
-name = "BUDGET"
-class_name = "BudgetDO"
-
-[[durable_objects.bindings]]
-name = "TRANSCRIPTS"
-class_name = "TranscriptDO"
-
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["BudgetDO", "TranscriptDO"]
 
-[[kv_namespaces]]
-binding = "STATE"
-id = "59cb11086c8d48569e5732f6e6eb9e97"
-
-[triggers]
-crons = ["*/45 * * * *", "0 3 * * *"]
-
-[vars]
-PRICE_FABLE_INPUT = "10"
-PRICE_FABLE_OUTPUT = "50"
-PRICE_HAIKU_INPUT = "1"
-PRICE_HAIKU_OUTPUT = "5"
-LIMIT_HOUR_USD = "1.28"
-LIMIT_DAY_USD = "4.45"
-LIMIT_WEEK_USD = "12.80"
-CHAT_ENABLED = "false"
-WARM_ENABLED = "true"
-WARM_IDLE_CUTOFF_MS = "7200000"
-RETENTION_DAYS = "365"
-ARTIFACT_URL = "https://claude.ai/"
-COMMIT_HASH = "dev"
-TURNSTILE_SITE_KEY = "0x4AAAAAADw3ZNuT1s_WjRG6"
-MAX_TOKENS_FABLE = "2048"
-MAX_TURNS = "40"
+[[migrations]]
+tag = "v2"
+deleted_classes = ["BudgetDO", "TranscriptDO"]
