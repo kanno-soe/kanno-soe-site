@@ -69,6 +69,7 @@ test("renders exposition Markdown with markdown-it", (t) => {
       "C_1 \\bowtie \\cdots \\bowtie C_n",
       "\\quad\\Longleftrightarrow\\quad",
       "\\bigwedge_{i=1}^{n-1}(C_i\\bowtie C_{i+1})",
+      "\\qquad\\frac{}{d\\to^*d}",
       "```",
       "",
       "```lean",
@@ -105,6 +106,10 @@ test("renders exposition Markdown with markdown-it", (t) => {
   ]);
 
   const html = readFileSync(path.join(projectRoot, "public", "context", "exposition.html"), "utf8");
+  const katexLayoutCss = readFileSync(
+    path.join(projectRoot, "public", "context", "katex-layout.css"),
+    "utf8"
+  );
   const katexCss = readFileSync(path.join(projectRoot, "public", "vendor", "katex", "katex.min.css"), "utf8");
   const katexMainFont = readFileSync(
     path.join(projectRoot, "public", "vendor", "katex", "fonts", "KaTeX_Main-Regular.woff2")
@@ -119,6 +124,17 @@ test("renders exposition Markdown with markdown-it", (t) => {
   assert.equal(html.match(/class="katex-html"/g)?.length, 4);
   assert.match(html, /<span class="math-inline"><span class="katex"><span class="katex-mathml"><math[^>]*><semantics>/);
   assert.match(html, /<span class="katex-html" aria-hidden="true">/);
+  assert.doesNotMatch(html, /\sstyle="/);
+  const referencedLayoutStyles = new Set(
+    Array.from(html.matchAll(/data-katex-layout="([^"]+)"/gu), (match) => match[1])
+  );
+  const generatedLayoutStyles = new Set(
+    Array.from(katexLayoutCss.matchAll(/\[data-katex-layout="([^"]+)"\]/gu), (match) => match[1])
+  );
+  assert.ok(referencedLayoutStyles.size > 0);
+  assert.deepEqual(generatedLayoutStyles, referencedLayoutStyles);
+  assert.match(katexLayoutCss, /\{ [^}]*height:/);
+  assert.match(katexLayoutCss, /\{ [^}]*top:/);
   assert.match(html, /<annotation encoding="application\/x-tex">d\\in\\mathcal D<\/annotation>/);
   assert.match(html, /Escaped dollar: \$5\. Unmatched dollars: \$5 and \$10\./);
   assert.match(html, /<code>\$d\\in\\mathcal D\$<\/code>/);
@@ -135,4 +151,10 @@ test("renders exposition Markdown with markdown-it", (t) => {
   assert.doesNotMatch(html, /<img[^>]+src="data:/);
   assert.match(katexCss, /KaTeX_Main-Regular\.woff2/);
   assert.ok(katexMainFont.byteLength > 0);
+});
+
+test("loads the CSP-safe generated KaTeX layout stylesheet", () => {
+  const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
+  const indexHtml = readFileSync(path.join(repositoryRoot, "public", "index.html"), "utf8");
+  assert.match(indexHtml, /<link rel="stylesheet" href="\/context\/katex-layout\.css">/);
 });

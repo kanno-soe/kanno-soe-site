@@ -16,8 +16,7 @@ export function supportsNativeMathML(documentRef = globalThis.document) {
   try {
     probe = documentRef.createElement("div");
     probe.setAttribute("aria-hidden", "true");
-    probe.style.cssText =
-      "position:absolute;left:-10000px;top:0;visibility:hidden;pointer-events:none;contain:layout style";
+    probe.className = "mathml-support-probe";
     probe.innerHTML =
       `<math xmlns="${MATHML_NAMESPACE}">` +
       `<mspace width="${PROBE_WIDTH}px" height="${PROBE_HEIGHT}px" depth="0px"></mspace>` +

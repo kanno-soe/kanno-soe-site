@@ -91,6 +91,12 @@ blocks are converted to static HTML plus MathML with KaTeX, while raw HTML in
 the source Markdown remains escaped. The build also copies KaTeX's stylesheet,
 fonts, and license into the ignored `public/vendor/` output directory.
 
+KaTeX's generated HTML normally stores its vertical layout measurements in
+inline `style` attributes. The context build replaces those attributes with
+stable references and writes the declarations to
+`public/context/katex-layout.css`, so the HTML fallback works without weakening
+the site's `style-src 'self'` Content Security Policy.
+
 KaTeX HTML is the fail-safe visual rendering. Before inserting the fetched
 Exposition HTML, the page checks native MathML layout and tries to load a known
 local OpenType math font. It reveals the MathML and hides the KaTeX HTML only
@@ -101,8 +107,9 @@ inconclusive probes retain the static HTML rendering.
 the current source checkout. The same build also writes the default modular
 snapshot at `public/context/kanno-soe.md`, all alternate module-selection
 snapshots, `public/context/exposition.md`, `public/context/exposition.html`,
-and `public/context/manifest.json`; the directory is ignored because those
-files are generated from the source checkout.
+`public/context/katex-layout.css`, and `public/context/manifest.json`; the
+directory is ignored because those files are generated from the source
+checkout.
 
 ## Self-Serve Use
 

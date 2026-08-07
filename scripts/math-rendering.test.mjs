@@ -14,7 +14,7 @@ function probeDocument({ width = 77, height = 23, fonts } = {}) {
     }
   };
   const probe = {
-    style: {},
+    className: "",
     setAttribute() {},
     querySelector(selector) {
       return selector === "mspace" ? mspace : null;
@@ -37,12 +37,13 @@ function probeDocument({ width = 77, height = 23, fonts } = {}) {
     }
   };
 
-  return { documentRef, state };
+  return { documentRef, probe, state };
 }
 
 test("recognizes MathML only when the dimensioned mspace is laid out", () => {
   const supported = probeDocument();
   assert.equal(supportsNativeMathML(supported.documentRef), true);
+  assert.equal(supported.probe.className, "mathml-support-probe");
   assert.deepEqual(supported.state, { appended: true, removed: true });
 
   const unsupported = probeDocument({ width: 0, height: 0 });
