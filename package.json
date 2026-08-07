@@ -7,7 +7,7 @@
     "build:context": "node scripts/build-context.mjs",
     "check": "tsc --noEmit",
     "test": "node --test",
-    "dev": "wrangler dev",
+    "dev": "node scripts/dev.mjs",
     "deploy": "wrangler deploy"
   },
   "devDependencies": {

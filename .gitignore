@@ -1,6 +1,7 @@
 .vscode/
 .agents/
 node_modules/
+.preview/
 .wrangler/
 .dev.vars
 dist/

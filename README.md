@@ -57,7 +57,22 @@ ksmd-theory.net/* -> https://ksmd-theory.org/$1
 
 Use status code `301`.
 
-## Local Context Build
+## Local Preview
+
+```sh
+pnpm install
+pnpm dev
+```
+
+Starting the preview refreshes a cached checkout of
+`https://github.com/kanno-soe/kanno-soe` at `main`, rebuilds the frozen context
+and generated KaTeX assets, and then starts Wrangler. This ensures the preview
+uses the current public source content and serves every linked stylesheet.
+
+Set `KANNO_SOE_REF` to preview another source branch or commit. Advanced local
+testing can also set `KANNO_SOE_REPO_URL`.
+
+## Manual Context Build
 
 ```sh
 pnpm install
