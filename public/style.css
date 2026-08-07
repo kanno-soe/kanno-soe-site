@@ -694,7 +694,6 @@ pre,
   max-width: 100%;
   margin: 0 0 1rem;
   padding: 0.7rem 0.25rem;
-  overflow-x: auto;
   color: var(--ink);
   text-align: center;
 }
@@ -707,6 +706,8 @@ pre,
 
 .markdown-body .math-block .katex-display {
   margin: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .native-mathml .markdown-body .katex {

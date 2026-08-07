@@ -1,10 +1,15 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import {
   canUseNativeMathML,
   hasSuitableMathFont,
   supportsNativeMathML
 } from "../public/math-rendering.js";
+
+const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 function probeDocument({ width = 77, height = 23, fonts } = {}) {
   const state = { appended: false, removed: false };
@@ -109,4 +114,14 @@ test("enables native MathML only after layout and font checks both pass", async 
   });
 
   assert.equal(await canUseNativeMathML({ documentRef, timeoutMs: 20 }), true);
+});
+
+test("keeps display math in vertical flow while scrolling wide formulas", () => {
+  const css = readFileSync(path.join(projectRoot, "public", "style.css"), "utf8");
+  const blockRule = css.match(/\.markdown-body \.math-block \{([^}]*)\}/u)?.[1] ?? "";
+  const displayRule = css.match(/\.markdown-body \.math-block \.katex-display \{([^}]*)\}/u)?.[1] ?? "";
+
+  assert.doesNotMatch(blockRule, /overflow-[xy]:/u);
+  assert.match(displayRule, /overflow-x:\s*auto;/u);
+  assert.match(displayRule, /overflow-y:\s*hidden;/u);
 });
