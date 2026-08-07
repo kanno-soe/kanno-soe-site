@@ -266,6 +266,51 @@ function slugify(value) {
   );
 }
 
+function renderMath(content, displayMode) {
+  return katex.renderToString(content, {
+    displayMode,
+    output: "mathml",
+    strict: "warn",
+    throwOnError: false,
+    trust: false
+  });
+}
+
+function isEscaped(source, index) {
+  let backslashes = 0;
+  for (let cursor = index - 1; cursor >= 0 && source[cursor] === "\\"; cursor -= 1) {
+    backslashes += 1;
+  }
+  return backslashes % 2 === 1;
+}
+
+function parseInlineMath(state, silent) {
+  const start = state.pos;
+  const source = state.src;
+  if (source[start] !== "$" || isEscaped(source, start)) return false;
+  if (source[start - 1] === "$" || source[start + 1] === "$" || /\s/u.test(source[start + 1] ?? "")) {
+    return false;
+  }
+
+  for (let end = start + 1; end < state.posMax; end += 1) {
+    if (source[end] === "\n") return false;
+    if (source[end] !== "$" || isEscaped(source, end)) continue;
+    if (/\s/u.test(source[end - 1]) || source[end + 1] === "$" || /\d/u.test(source[end + 1] ?? "")) {
+      continue;
+    }
+
+    if (!silent) {
+      const token = state.push("math_inline", "math", 0);
+      token.content = source.slice(start + 1, end);
+      token.markup = "$";
+    }
+    state.pos = end + 1;
+    return true;
+  }
+
+  return false;
+}
+
 function createMarkdownRenderer() {
   const renderer = new MarkdownIt({
     breaks: false,
@@ -283,6 +328,9 @@ function createMarkdownRenderer() {
 
   renderer.validateLink = (target) =>
     !target.trim().toLowerCase().startsWith("data:") && validateLink(target);
+  renderer.inline.ruler.before("escape", "math_inline", parseInlineMath);
+  renderer.renderer.rules.math_inline = (tokens, index) =>
+    `<span class="math-inline">${renderMath(tokens[index].content, false)}</span>`;
   renderer.renderer.rules.link_open = (tokens, index, options, env, self) => {
     const href = tokens[index].attrGet("href");
     if (href !== null) tokens[index].attrSet("href", resolveMarkdownLink(href, env.currentRel));
@@ -294,13 +342,7 @@ function createMarkdownRenderer() {
     const language = token.info.trim().split(/\s+/u, 1)[0]?.toLowerCase();
     if (language !== "math") return renderFence(tokens, index, options, env, self);
 
-    const mathml = katex.renderToString(token.content.trim(), {
-      displayMode: true,
-      output: "mathml",
-      strict: "warn",
-      throwOnError: false,
-      trust: false
-    });
+    const mathml = renderMath(token.content.trim(), true);
     return `<div class="math-block">\n${mathml}\n</div>\n`;
   };
 

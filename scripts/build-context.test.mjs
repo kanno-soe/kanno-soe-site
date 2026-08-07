@@ -59,6 +59,12 @@ test("renders exposition Markdown with markdown-it", (t) => {
       "| --- | --- |",
       "| one | **two** |",
       "",
+      "Inline math: For every $d\\in\\mathcal D$, fix $E$ and write $\\to^*$.",
+      "",
+      "Escaped dollar: \\$5. Unmatched dollars: $5 and $10.",
+      "",
+      "Inline code: `$d\\in\\mathcal D$`.",
+      "",
       "```math",
       "C_1 \\bowtie \\cdots \\bowtie C_n",
       "\\quad\\Longleftrightarrow\\quad",
@@ -105,6 +111,11 @@ test("renders exposition Markdown with markdown-it", (t) => {
   assert.match(html, /<a href="#markdown-exposition-theory-md" rel="noreferrer">Theory<\/a>/);
   assert.match(html, /<a href="#named-section" rel="noreferrer">Named section<\/a>/);
   assert.match(html, /<table>[\s\S]*<strong>two<\/strong>[\s\S]*<\/table>/);
+  assert.equal(html.match(/class="math-inline"/g)?.length, 3);
+  assert.match(html, /<span class="math-inline"><span class="katex"><math[^>]*><semantics>/);
+  assert.match(html, /<annotation encoding="application\/x-tex">d\\in\\mathcal D<\/annotation>/);
+  assert.match(html, /Escaped dollar: \$5\. Unmatched dollars: \$5 and \$10\./);
+  assert.match(html, /<code>\$d\\in\\mathcal D\$<\/code>/);
   assert.match(html, /<div class="math-block">\s*<span class="katex"><math[^>]+display="block">/);
   assert.match(html, /<annotation encoding="application\/x-tex">[\s\S]*\\bowtie[\s\S]*<\/annotation>/);
   assert.doesNotMatch(html, /<code class="language-math">/);
