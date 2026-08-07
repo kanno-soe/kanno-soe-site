@@ -105,6 +105,10 @@ test("renders exposition Markdown with markdown-it", (t) => {
   ]);
 
   const html = readFileSync(path.join(projectRoot, "public", "context", "exposition.html"), "utf8");
+  const katexCss = readFileSync(path.join(projectRoot, "public", "vendor", "katex", "katex.min.css"), "utf8");
+  const katexMainFont = readFileSync(
+    path.join(projectRoot, "public", "vendor", "katex", "fonts", "KaTeX_Main-Regular.woff2")
+  );
   assert.match(html, /<blockquote>\s*<p>line 1<br>\nline 2<\/p>\s*<\/blockquote>/);
   assert.match(html, /<blockquote>\s*<p>soft line 1\s+soft line 2<\/p>\s*<\/blockquote>/);
   assert.match(html, /<li>outer\s*<ul>\s*<li>inner<\/li>\s*<\/ul>\s*<\/li>/);
@@ -112,11 +116,16 @@ test("renders exposition Markdown with markdown-it", (t) => {
   assert.match(html, /<a href="#named-section" rel="noreferrer">Named section<\/a>/);
   assert.match(html, /<table>[\s\S]*<strong>two<\/strong>[\s\S]*<\/table>/);
   assert.equal(html.match(/class="math-inline"/g)?.length, 3);
-  assert.match(html, /<span class="math-inline"><span class="katex"><math[^>]*><semantics>/);
+  assert.equal(html.match(/class="katex-html"/g)?.length, 4);
+  assert.match(html, /<span class="math-inline"><span class="katex"><span class="katex-mathml"><math[^>]*><semantics>/);
+  assert.match(html, /<span class="katex-html" aria-hidden="true">/);
   assert.match(html, /<annotation encoding="application\/x-tex">d\\in\\mathcal D<\/annotation>/);
   assert.match(html, /Escaped dollar: \$5\. Unmatched dollars: \$5 and \$10\./);
   assert.match(html, /<code>\$d\\in\\mathcal D\$<\/code>/);
-  assert.match(html, /<div class="math-block">\s*<span class="katex"><math[^>]+display="block">/);
+  assert.match(
+    html,
+    /<div class="math-block">\s*<span class="katex-display"><span class="katex"><span class="katex-mathml"><math[^>]+display="block">/
+  );
   assert.match(html, /<annotation encoding="application\/x-tex">[\s\S]*\\bowtie[\s\S]*<\/annotation>/);
   assert.doesNotMatch(html, /<code class="language-math">/);
   assert.match(html, /<pre><code class="language-lean">#check Nat\.add_comm/);
@@ -124,4 +133,6 @@ test("renders exposition Markdown with markdown-it", (t) => {
   assert.doesNotMatch(html, /<script>/);
   assert.doesNotMatch(html, /<a href="javascript:/);
   assert.doesNotMatch(html, /<img[^>]+src="data:/);
+  assert.match(katexCss, /KaTeX_Main-Regular\.woff2/);
+  assert.ok(katexMainFont.byteLength > 0);
 });

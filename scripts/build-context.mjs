@@ -1,6 +1,14 @@
 #!/usr/bin/env node
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync
+} from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import katex from "katex";
@@ -269,11 +277,29 @@ function slugify(value) {
 function renderMath(content, displayMode) {
   return katex.renderToString(content, {
     displayMode,
-    output: "mathml",
+    output: "htmlAndMathml",
     strict: "warn",
     throwOnError: false,
     trust: false
   });
+}
+
+function copyKaTeXAssets(projectRoot) {
+  const sourceCss = fileURLToPath(import.meta.resolve("katex/dist/katex.min.css"));
+  const sourcePackage = fileURLToPath(import.meta.resolve("katex/package.json"));
+  const sourceRoot = path.dirname(sourcePackage);
+  const sourceFonts = path.join(path.dirname(sourceCss), "fonts");
+  const targetRoot = path.join(projectRoot, "public", "vendor", "katex");
+  const targetFonts = path.join(targetRoot, "fonts");
+
+  mkdirSync(targetFonts, { recursive: true });
+  copyFileSync(sourceCss, path.join(targetRoot, "katex.min.css"));
+  copyFileSync(path.join(sourceRoot, "LICENSE"), path.join(targetRoot, "LICENSE"));
+
+  for (const fileName of readdirSync(sourceFonts)) {
+    const sourcePath = path.join(sourceFonts, fileName);
+    if (statSync(sourcePath).isFile()) copyFileSync(sourcePath, path.join(targetFonts, fileName));
+  }
 }
 
 function isEscaped(source, index) {
@@ -420,6 +446,7 @@ const moduleText = [
 ].join("\n");
 
 writeFileSync(outPath, moduleText, "utf8");
+copyKaTeXAssets(projectRoot);
 
 const contextDir = path.join(projectRoot, "public", "context");
 mkdirSync(contextDir, { recursive: true });

@@ -87,8 +87,16 @@ pnpm run check
 checkout's `Exposition/` directory. Lines containing the `GENERATED` marker are
 removed from Markdown included in the generated artifacts. Exposition HTML is
 rendered with `markdown-it`; dollar-delimited inline math and fenced `math`
-blocks are converted to MathML with KaTeX, while raw HTML in the source
-Markdown remains escaped.
+blocks are converted to static HTML plus MathML with KaTeX, while raw HTML in
+the source Markdown remains escaped. The build also copies KaTeX's stylesheet,
+fonts, and license into the ignored `public/vendor/` output directory.
+
+KaTeX HTML is the fail-safe visual rendering. Before inserting the fetched
+Exposition HTML, the page checks native MathML layout and tries to load a known
+local OpenType math font. It reveals the MathML and hides the KaTeX HTML only
+when both checks pass, so unsupported browsers, missing fonts, and failed or
+inconclusive probes retain the static HTML rendering.
+
 `src/context.generated.ts` is intentionally ignored because every deploy freezes
 the current source checkout. The same build also writes the default modular
 snapshot at `public/context/kanno-soe.md`, all alternate module-selection

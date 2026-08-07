@@ -30,6 +30,22 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "KSMD Math";
+  src:
+    local("STIX Two Math"),
+    local("Cambria Math"),
+    local("Latin Modern Math"),
+    local("Libertinus Math"),
+    local("XITS Math"),
+    local("Noto Sans Math"),
+    local("TeX Gyre Termes Math"),
+    local("Asana Math");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
 :root {
   color-scheme: light;
   --paper: #eef1f3;
@@ -678,6 +694,44 @@ pre,
   display: inline-block;
   min-width: max-content;
   font-size: 1.1em;
+}
+
+.markdown-body .math-block .katex-display {
+  margin: 0;
+}
+
+.native-mathml .markdown-body .katex {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.native-mathml .markdown-body .math-block .katex {
+  font-size: 1.1em;
+}
+
+.native-mathml .markdown-body .katex .katex-html {
+  display: none;
+}
+
+.native-mathml .markdown-body .katex .katex-mathml {
+  position: static;
+  display: inline;
+  width: auto;
+  height: auto;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  -webkit-clip-path: none;
+  clip-path: none;
+}
+
+.native-mathml .markdown-body .math-block .katex-mathml {
+  display: block;
+}
+
+.native-mathml .markdown-body .katex-mathml math {
+  font-family: "KSMD Math", math;
 }
 
 .markdown-body table {

@@ -1,3 +1,5 @@
+import { canUseNativeMathML, NATIVE_MATHML_CLASS } from "./math-rendering.js";
+
 const snapshotMeta = document.querySelector("#snapshotMeta");
 const snapshotDownload = document.querySelector("#snapshotDownload");
 const snapshotPromptHint = document.querySelector("#snapshotPromptHint");
@@ -166,11 +168,13 @@ async function loadExposition() {
   if (!expositionContent) return;
 
   try {
-    const response = await fetch("/context/exposition.html", { cache: "no-store" });
-    if (!response.ok) throw new Error("Exposition HTML could not be loaded.");
-
-    const html = await response.text();
+    const htmlRequest = fetch("/context/exposition.html", { cache: "no-store" }).then((response) => {
+      if (!response.ok) throw new Error("Exposition HTML could not be loaded.");
+      return response.text();
+    });
+    const [html, useNativeMathML] = await Promise.all([htmlRequest, canUseNativeMathML()]);
     if (html.trim()) {
+      if (useNativeMathML) document.documentElement.classList.add(NATIVE_MATHML_CLASS);
       expositionContent.innerHTML = html;
       prepareExpositionReader();
     } else {

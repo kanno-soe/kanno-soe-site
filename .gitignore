@@ -6,3 +6,4 @@ node_modules/
 dist/
 src/context.generated.ts
 public/context/
+public/vendor/
