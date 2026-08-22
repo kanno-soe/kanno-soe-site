@@ -585,7 +585,7 @@ pre,
   padding-top: 0;
 }
 
-.markdown-file > :not(.markdown-table-scroll) {
+.markdown-file > :not(.markdown-table-container) {
   max-width: 72ch;
 }
 
@@ -641,7 +641,7 @@ pre,
 .markdown-body blockquote,
 .markdown-body pre,
 .markdown-body table,
-.markdown-table-scroll,
+.markdown-table-container,
 .markdown-body hr {
   margin: 0 0 1rem;
 }
@@ -742,64 +742,32 @@ pre,
 
 .markdown-body table {
   width: 100%;
-  max-width: 68rem;
+  max-width: 100%;
   border-collapse: collapse;
-  table-layout: auto;
+  table-layout: fixed;
   overflow-wrap: anywhere;
 }
 
-.markdown-table-scroll {
+.markdown-table-container {
   --table-max-width: 68rem;
   position: relative;
   z-index: 1;
   width: min(100%, var(--table-max-width));
   max-width: 100%;
   min-width: 0;
-  padding-right: 1px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  scrollbar-color: var(--temper-blue) #dfe5e8;
-  scrollbar-width: auto;
 }
 
-.markdown-table-scroll:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--temper-blue) 36%, transparent);
-  outline-offset: 3px;
-}
-
-.markdown-table-hint {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px !important;
-  color: var(--temper-blue-strong);
-  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.85rem;
-  font-weight: 600;
-  line-height: 1.35;
-}
-
-.markdown-table-hint::after {
-  content: "\2192";
-  font-size: 1.05em;
-}
-
-.markdown-table-hint[hidden] {
-  display: none;
-}
-
-.markdown-table-scroll table {
-  width: max-content;
-  min-width: 100%;
-  max-width: var(--table-max-width);
+.markdown-table-container table {
+  width: 100%;
+  max-width: 100%;
   margin: 0;
 }
 
 .markdown-body th,
 .markdown-body td {
-  min-width: 10rem;
-  max-width: 24rem;
-  padding: 10px 12px;
+  min-width: 0;
+  max-width: none;
+  padding: clamp(6px, 1.2vw, 10px) clamp(7px, 1.5vw, 12px);
   border: 1px solid var(--line);
   overflow-wrap: anywhere;
   text-align: left;
@@ -936,9 +904,5 @@ pre,
   .markdown-body {
     padding-left: 18px;
     font-size: 1rem;
-  }
-
-  .markdown-table-scroll {
-    --table-max-width: 100%;
   }
 }
