@@ -56,6 +56,9 @@ test("renders exposition Markdown with markdown-it", (t) => {
       "| Name | Value |",
       "| --- | --- |",
       "| one | **two** |",
+      "| split | first<br>second |",
+      "| escaped | \\<br> |",
+      "| rejected | <em>still text</em> |",
       "",
       "Inline math: For every $d\\in\\mathcal D$, fix $E$ and write $\\to^*$.",
       "",
@@ -116,6 +119,10 @@ test("renders exposition Markdown with markdown-it", (t) => {
   assert.match(html, /<a href="#markdown-exposition-theory-md" rel="noreferrer">Theory<\/a>/);
   assert.match(html, /<a href="#named-section" rel="noreferrer">Named section<\/a>/);
   assert.match(html, /<table>[\s\S]*<strong>two<\/strong>[\s\S]*<\/table>/);
+  assert.match(html, /<td>first<br>\s*second<\/td>/);
+  assert.match(html, /<td>&lt;br&gt;<\/td>/);
+  assert.match(html, /<td>&lt;em&gt;still text&lt;\/em&gt;<\/td>/);
+  assert.doesNotMatch(html, /<em>still text<\/em>/);
   assert.equal(html.match(/class="math-inline"/g)?.length, 3);
   assert.equal(html.match(/class="katex-html"/g)?.length, 4);
   assert.match(html, /<span class="math-inline"><span class="katex"><span class="katex-mathml"><math[^>]*><semantics>/);

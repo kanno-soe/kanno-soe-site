@@ -336,6 +336,18 @@ function isEscaped(source, index) {
   return backslashes % 2 === 1;
 }
 
+function parseLiteralBreak(state, silent) {
+  const start = state.pos;
+  if (!state.src.startsWith("<br>", start)) return false;
+
+  if (!silent) {
+    const token = state.push("hardbreak", "br", 0);
+    token.markup = "<br>";
+  }
+  state.pos = start + "<br>".length;
+  return true;
+}
+
 function parseInlineMath(state, silent) {
   const start = state.pos;
   const source = state.src;
@@ -380,6 +392,7 @@ function createMarkdownRenderer() {
 
   renderer.validateLink = (target) =>
     !target.trim().toLowerCase().startsWith("data:") && validateLink(target);
+  renderer.inline.ruler.before("escape", "literal_break", parseLiteralBreak);
   renderer.inline.ruler.before("escape", "math_inline", parseInlineMath);
   renderer.renderer.rules.math_inline = (tokens, index) =>
     `<span class="math-inline">${renderMath(tokens[index].content, false)}</span>`;

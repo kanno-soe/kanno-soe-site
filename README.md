@@ -84,9 +84,10 @@ pnpm run check
 checkout's `Exposition/` directory. Lines containing the `GENERATED` marker are
 removed from Markdown included in the generated artifacts. Exposition HTML is
 rendered with `markdown-it`; dollar-delimited inline math and fenced `math`
-blocks are converted to static HTML plus MathML with KaTeX, while raw HTML in
-the source Markdown remains escaped. The build also copies KaTeX's stylesheet,
-fonts, and license into the ignored `public/vendor/` output directory.
+blocks are converted to static HTML plus MathML with KaTeX. Literal `<br>`
+tokens become line breaks (including inside table cells), while every other raw
+HTML tag remains escaped. The build also copies KaTeX's stylesheet, fonts, and
+license into the ignored `public/vendor/` output directory.
 
 KaTeX's generated HTML normally stores its vertical layout measurements in
 inline `style` attributes. The context build replaces those attributes with
