@@ -1,5 +1,6 @@
 import { canUseNativeMathML, NATIVE_MATHML_CLASS } from "./math-rendering.js";
 import { scrollToHashTarget } from "./hash-navigation.js";
+import { copyTextFromUrl, freezeFailedCopy } from "./clipboard-copy.js";
 
 const snapshotMeta = document.querySelector("#snapshotMeta");
 const snapshotDownload = document.querySelector("#snapshotDownload");
@@ -68,15 +69,17 @@ async function copySelectedSnapshot() {
   if (copySnapshotStatus) copySnapshotStatus.textContent = "";
 
   try {
-    const response = await fetch(snapshotDownload.href, { cache: "no-store" });
-    if (!response.ok) throw new Error("Snapshot could not be loaded.");
-
-    await navigator.clipboard.writeText(await response.text());
+    await copyTextFromUrl(snapshotDownload.href);
     showSnapshotCopyState("Copied", "Copied");
   } catch (error) {
     console.warn(error);
-    showSnapshotCopyState("Copy failed", "Copy failed");
+    freezeSnapshotCopyFailure();
   }
+}
+
+function freezeSnapshotCopyFailure() {
+  window.clearTimeout(resetSnapshotCopyTimer);
+  freezeFailedCopy(copySnapshotButton, copySnapshotStatus);
 }
 
 function showSnapshotCopyState(buttonLabel, statusText) {
