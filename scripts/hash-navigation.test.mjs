@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { scrollToHashTarget } from "../public/hash-navigation.js";
+import {
+  scrollToHashTarget,
+  scrollToHashTargetOnInitialNavigation
+} from "../public/hash-navigation.js";
 
 function hashFixture(hash, targetId = "section") {
   let scrolled = false;
@@ -40,5 +43,35 @@ test("leaves the page position unchanged when the hash has no target", () => {
   const fixture = hashFixture("#missing");
 
   assert.equal(scrollToHashTarget(fixture), false);
+  assert.equal(fixture.didScroll(), false);
+});
+
+test("scrolls to a delayed hash target on a fresh navigation", () => {
+  const fixture = hashFixture("#section");
+  const performanceRef = {
+    getEntriesByType: () => [{ type: "navigate" }]
+  };
+
+  assert.equal(scrollToHashTargetOnInitialNavigation({ ...fixture, performanceRef }), true);
+  assert.equal(fixture.didScroll(), true);
+});
+
+test("leaves scroll restoration to the browser after a reload", () => {
+  const fixture = hashFixture("#section");
+  const performanceRef = {
+    getEntriesByType: () => [{ type: "reload" }]
+  };
+
+  assert.equal(scrollToHashTargetOnInitialNavigation({ ...fixture, performanceRef }), false);
+  assert.equal(fixture.didScroll(), false);
+});
+
+test("leaves scroll restoration to the browser after back or forward navigation", () => {
+  const fixture = hashFixture("#section");
+  const performanceRef = {
+    getEntriesByType: () => [{ type: "back_forward" }]
+  };
+
+  assert.equal(scrollToHashTargetOnInitialNavigation({ ...fixture, performanceRef }), false);
   assert.equal(fixture.didScroll(), false);
 });

@@ -15,3 +15,14 @@ export function scrollToHashTarget({ documentRef = document, locationRef = windo
   target.scrollIntoView();
   return true;
 }
+
+export function scrollToHashTargetOnInitialNavigation({
+  documentRef = document,
+  locationRef = window.location,
+  performanceRef = window.performance
+} = {}) {
+  const [navigation] = performanceRef?.getEntriesByType?.("navigation") ?? [];
+  if (navigation && navigation.type !== "navigate") return false;
+
+  return scrollToHashTarget({ documentRef, locationRef });
+}

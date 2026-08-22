@@ -1,5 +1,5 @@
 import { canUseNativeMathML, NATIVE_MATHML_CLASS } from "./math-rendering.js";
-import { scrollToHashTarget } from "./hash-navigation.js";
+import { scrollToHashTargetOnInitialNavigation } from "./hash-navigation.js";
 import { copyTextFromUrl, freezeFailedCopy } from "./clipboard-copy.js";
 
 const snapshotMeta = document.querySelector("#snapshotMeta");
@@ -197,7 +197,7 @@ function prepareExpositionReader() {
   wrapTables();
   buildToc(headings);
   setupScrollSpy(headings);
-  requestAnimationFrame(() => scrollToHashTarget());
+  requestAnimationFrame(() => scrollToHashTargetOnInitialNavigation());
 }
 
 function wrapTables() {
