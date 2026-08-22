@@ -1,4 +1,5 @@
 import { canUseNativeMathML, NATIVE_MATHML_CLASS } from "./math-rendering.js";
+import { scrollToHashTarget } from "./hash-navigation.js";
 
 const snapshotMeta = document.querySelector("#snapshotMeta");
 const snapshotDownload = document.querySelector("#snapshotDownload");
@@ -193,6 +194,7 @@ function prepareExpositionReader() {
   wrapTables();
   buildToc(headings);
   setupScrollSpy(headings);
+  requestAnimationFrame(() => scrollToHashTarget());
 }
 
 function wrapTables() {
